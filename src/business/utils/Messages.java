@@ -8,7 +8,8 @@ public class Messages {
     public static String UPDATE_STATUS_SUCESS = "Cập nhật trạng thái thành công !";
     public static String DELETE_SUCESS = "Xóa thành công !";
     public static String EXIT_SUCESS = "Đã thoát chương trình !";
-    public static String LOGIN_INVALID = "Tên đăng nhập hoặc mật khẩu không chính xác, mời nhập lại !";
+    public static String USERNAME_INVALID = "Tên đăng nhập không chính xác, mời nhập lại !";
+    public static String PASSWORD_INVALID = "Mật khẩu đăng nhập không chính xác, mời nhập lại !";
     public static String BLOCK_USER_ERROR = "Tài khoản đang bị khóa, vui long liên hệ với quản trị viên (098-765-4321) !";
     public static String ID_NOT_FOUND = "ID không tồn tại, mời nhập lại !";
     public static String NAME_NOT_FOUND = "Tên không tồn tại, mời nhập lại !";
