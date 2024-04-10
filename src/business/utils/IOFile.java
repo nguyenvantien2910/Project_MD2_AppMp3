@@ -10,6 +10,7 @@ public class IOFile {
     public static final String SONG_PATH = "src/business/data/songs.txt";
     public static final String SINGER_PATH = "src/business/data/singers.txt";
     public static final String ALBUM_PATH = "src/business/data/albums.txt";
+    public static final String HISTORY_PATH = "src/business/data/histories.txt";
 
 
     //Ghi file
@@ -27,8 +28,7 @@ public class IOFile {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
-
-            fos = new FileOutputStream(path, true);
+            fos = new FileOutputStream(path);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(list);
         } catch (FileNotFoundException e) {
@@ -61,16 +61,9 @@ public class IOFile {
             fis = new FileInputStream(path);
             ois = new ObjectInputStream(fis);
             list = (List<T>) ois.readObject();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (EOFException e) {
-
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         } finally {
-
             try {
                 if (fis != null) {
                     fis.close();

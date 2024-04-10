@@ -1,14 +1,6 @@
 package presentation.admin;
-
-import business.designIplm.ISingerIplm;
-import business.designIplm.IUserIplm;
-import business.entity.Singer;
-import business.entity.User;
-import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
-import java.io.FileNotFoundException;
-import java.util.List;
 
 import static presentation.Main.*;
 
@@ -87,8 +79,8 @@ public class AdminMenu {
                 case 4:
                     break;
                 case 5:
-                    isExit = true;
-                    return;
+                    displayAdminMenu();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }
@@ -113,8 +105,8 @@ public class AdminMenu {
                 case 3:
                     break;
                 case 4:
-                    isExit = true;
-                    return;
+                    displayAdminMenu();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }
@@ -135,18 +127,23 @@ public class AdminMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iSongIplm.handleShow();
                     break;
                 case 2:
+                    iSongIplm.handleAdd();
                     break;
                 case 3:
+                    iSongIplm.handleEdit();
                     break;
                 case 4:
+                    iSongIplm.handleDelete();
                     break;
                 case 5:
+                    iSongIplm.searchSongByName();
                     break;
                 case 6:
-                    isExit = true;
-                    return;
+                    displayAdminMenu();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }
@@ -167,18 +164,23 @@ public class AdminMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iAlbumIplm.handleShow();
                     break;
                 case 2:
+                    iAlbumIplm.handleAdd();
                     break;
                 case 3:
+                    iAlbumIplm.handleEdit();
                     break;
                 case 4:
+                    iAlbumIplm.handleDelete();
                     break;
                 case 5:
+                    iAlbumIplm.searchAlbumByName();
                     break;
                 case 6:
-                    isExit = true;
-                    return;
+                    displayAdminMenu();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }
@@ -208,12 +210,14 @@ public class AdminMenu {
                     iSingerIplm.handleEdit();
                     break;
                 case 4:
+                    iSingerIplm.handleDelete();
                     break;
                 case 5:
+                    iSingerIplm.searchSingerByName();
                     break;
                 case 6:
-                    isExit = true;
-                    return;
+                    displayAdminMenu();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }
@@ -245,8 +249,8 @@ public class AdminMenu {
                     iUserIplm.updateUserStatus();
                     break;
                 case 5:
-                    isExit = true;
-                    return;
+                    displayAdminMenu();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }

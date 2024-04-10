@@ -2,6 +2,6 @@ package business.design;
 
 import business.entity.Song;
 
-public interface ISongDesign extends IGenericDesign<Song>{
-    void searchByName();
+public interface ISongDesign extends IGenericDesign{
+    void searchSongByName();
 }

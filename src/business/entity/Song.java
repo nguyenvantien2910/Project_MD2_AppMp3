@@ -1,16 +1,24 @@
 package business.entity;
 
+import business.utils.InputMethods;
+import business.utils.Messages;
+
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+
+import static presentation.Main.*;
 
 public class Song implements Serializable {
-    private Integer songId;
-    private Integer singerId;
+    private int songId;
+    private int singerId;
     private String songName;
     private String description;
     private String source;
-    private Double price;
-    private int albumId;
+    private double price;
+    private Integer albumId;
     private String image;
     private LocalDate createAt;
     private LocalDate updateAt;
@@ -19,7 +27,7 @@ public class Song implements Serializable {
     public Song() {
     }
 
-    public Song(Integer songId, Integer singerId, String songName, String description, String source, Double price, Integer albumId, String image, LocalDate createAt, LocalDate updateAt, int playCount) {
+    public Song(int songId, int singerId, String songName, String description, String source, double price, Integer albumId, String image, LocalDate createAt, LocalDate updateAt, int playCount) {
         this.songId = songId;
         this.singerId = singerId;
         this.songName = songName;
@@ -33,11 +41,11 @@ public class Song implements Serializable {
         this.playCount = playCount;
     }
 
-    public Integer getSongId() {
+    public int getSongId() {
         return songId;
     }
 
-    public void setSongId(Integer songId) {
+    public void setSongId(int songId) {
         this.songId = songId;
     }
 
@@ -73,11 +81,11 @@ public class Song implements Serializable {
         this.source = source;
     }
 
-    public Double getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -121,19 +129,120 @@ public class Song implements Serializable {
         this.playCount = playCount;
     }
 
-    public String displayData() {
-        return "Singer{" +
-                "songId=" + songId +
-                ", singerId=" + singerId +
-                ", songName='" + songName + '\'' +
-                ", description='" + description + '\'' +
-                ", source='" + source + '\'' +
-                ", price=" + price +
-                ", albumId=" + albumId +
-                ", image='" + image + '\'' +
-                ", createAt='" + createAt + '\'' +
-                ", updateAt='" + updateAt + '\'' +
-                ", playCount=" + playCount +
-                '}';
+    public void displayData() {
+        System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Source : %-20s | Price : %-12.2f | Album ID : %-5s | Image : %-20s | CreateAt : %-15s | UpdateAt : %-15s\n",
+                this.songId, this.singerId, this.songName, this.description, this.source, this.price, this.albumId, this.image, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+    }
+
+    public void inputData() {
+        this.songId = findMaxId();
+        this.singerId = selectSinger();
+        this.songName = inputSongName();
+        this.description = inputDescription();
+        this.source = inputSource();
+        this.price = inputPrice();
+        inputAlbumId();
+        this.image = inputImage();
+        this.createAt = LocalDate.from(LocalDateTime.now());
+        this.updateAt = LocalDate.from(LocalDateTime.now());
+        this.playCount = 0;
+    }
+
+    private String inputImage() {
+        System.out.println("Nhập link hình ảnh bài hát : ");
+        return InputMethods.getString();
+    }
+
+    private void inputAlbumId() {
+        System.out.println("Bạn có muốn nhập album cho bài hát không ? ");
+        System.out.println("1. Có");
+        System.out.println("2. Không");
+        System.out.println("Nhập lựa chọn của bạn ");
+
+        byte choice = InputMethods.getByte();
+
+        switch (choice) {
+            case 1:
+                if (albumList.isEmpty()) {
+                    System.err.println(Messages.EMTY_LIST);
+                    this.albumId = null;
+                } else {
+                    System.out.println("Danh sách album");
+                    for (int i = 0; i < albumList.size(); i++) {
+                        System.out.printf("%d.%s\n", i + 1, albumList.get(i).getName());
+                    }
+                    System.out.print("Lựa chọn của bạn: ");
+                    choice = InputMethods.getByte();
+                    this.albumId = albumList.get(choice - 1).getId();
+                }
+                break;
+            case 2:
+                this.albumId = null;
+                break;
+            default:
+                System.err.println(Messages.SELECT_INVALID);
+        }
+    }
+
+    private double inputPrice() {
+        System.out.println("Nhập giá cho bài hát :");
+        return InputMethods.getDouble();
+    }
+
+    private String inputSource() {
+        System.out.println("Nhập link nguồn cho bài hát :");
+        return InputMethods.getString();
+    }
+
+    private String inputDescription() {
+        System.out.println("Nhập mô tả cho bài hát : ");
+        return InputMethods.getString();
+    }
+
+    private String inputSongName() {
+        System.out.println("Nhập tên cho bài hát : ");
+        String inputName = InputMethods.getString().toLowerCase();
+        if (songList == null || songList.isEmpty()) {
+            return inputName;
+        } else {
+            // Kiểm tra xem có bài hát nào trong songList có tên chứa inputName hay không
+            boolean isExisting = songList.stream()
+                    .anyMatch(song -> song.getSongName().toLowerCase().contains(inputName));
+            if (isExisting) {
+                System.err.println(Messages.IS_EXITS_ERROR);
+            } else {
+                return inputName;
+            }
+
+            // Nếu không có bài hát nào chứa inputName hoặc inputName là trống/null, trả về null
+            return null;
+        }
+    }
+
+    private int selectSinger() {
+        if (!singerList.isEmpty()) {
+            System.out.println("Chọn ca sĩ cho bài hát:");
+            for (int i = 0; i < singerList.size(); i++) {
+                if (singerList.get(i).isStatus()) {
+                    System.out.printf("%d.%s\n", i + 1, singerList.get(i).getSingerName());
+                }
+            }
+            System.out.print("Lựa chọn của bạn: ");
+            byte choice = InputMethods.getByte();
+            return singerList.get(choice - 1).getSingerId();
+        }
+        return -1;
+    }
+
+    private int findMaxId() {
+        if (songList == null || songList.isEmpty()) {
+            return 1;
+        } else {
+            int maxSongId = songList.stream()
+                    .map(Song::getSongId)
+                    .max(Comparator.naturalOrder())
+                    .orElse(0);
+            return maxSongId + 1;
+        }
     }
 }

@@ -9,19 +9,13 @@ import business.utils.Messages;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-public class IUserIplm implements IUserDesign {
-    public static List<User> userList;
+import static presentation.Main.userList;
 
-    public static List<User> getUserList() {
-        if (userList == null) {
-            userList = IOFile.readFromFile(IOFile.USER_PATH);
-        }
-        return userList;
-    }
+public class IUserIplm implements IUserDesign {
     private static byte choice;
 
     @Override
-    public Integer findIndexById(Object id) {
+    public Integer findIndexByName(String name) {
         return 0;
     }
 
@@ -33,7 +27,7 @@ public class IUserIplm implements IUserDesign {
         for (int i = 0; i < addNum; i++) {
             User user = new User();
             System.out.printf("Nhập thông tin cho người dùng thứ %d \n", i + 1);
-            user.inputData(true);
+            user.inputData();
             userList.add(user);
         }
         try {
@@ -45,7 +39,7 @@ public class IUserIplm implements IUserDesign {
 
         // sau khi thêm lưu lại nó vào file
         try {
-            IOFile.writeToFile(IOFile.USER_PATH,userList);
+            IOFile.writeToFile(IOFile.USER_PATH, userList);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -53,11 +47,64 @@ public class IUserIplm implements IUserDesign {
 
     @Override
     public void handleShow() {
-        if (userList.isEmpty()) {
+        if (userList == null || userList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("==========USER LIST==========");
-            userList.forEach(User::displayData);
+            int firstIndexOfPage = 0;
+            int lastIndexOfPage = 2;
+            int elementPerPage = 3;
+            int page = 1;
+            int numberOfPage;
+            if (userList.size() % elementPerPage == 0) {
+                numberOfPage = userList.size() / elementPerPage;
+            } else {
+                numberOfPage = userList.size() / elementPerPage + 1;
+            }
+            do {
+                for (int i = 0; i < userList.size(); i++) {
+                    if (i >= firstIndexOfPage && i <= lastIndexOfPage) {
+                        userList.get(i).displayDataForAdmin();
+                    }
+                }
+
+                System.out.println();
+                System.out.println("Trang : " + page + "/" + numberOfPage);
+                if (page == 1) {
+                    System.out.println("2.Trang sau");
+                    System.out.println("3.Thoát");
+                } else if (page == numberOfPage) {
+                    System.out.println("1.Trang Trước");
+                    System.out.println("3.Thoát");
+                } else {
+                    System.out.println("1.Trang trước  ||  2.Trang sau");
+                    System.out.println("3.Thoát");
+                }
+
+                System.out.println("Mời nhập lựa chọn: ");
+                choice = InputMethods.getByte();
+                switch (choice) {
+                    case 1:
+                        if (page <= numberOfPage && page >= 0) {
+                            firstIndexOfPage -= elementPerPage;
+                            lastIndexOfPage -= elementPerPage;
+                            page -= 1;
+                            break;
+                        }
+                    case 2:
+                        if (page <= numberOfPage && page >= 0) {
+                            firstIndexOfPage += elementPerPage;
+                            lastIndexOfPage += elementPerPage;
+                            page += 1;
+                            break;
+                        }
+                    case 3:
+                        return;
+                    default:
+                        System.err.print(Messages.SELECT_INVALID);
+                        break;
+                }
+            } while (true);
         }
     }
 
@@ -65,7 +112,7 @@ public class IUserIplm implements IUserDesign {
     public void handleEdit() {
         // sau khi edit lưu lại nó vào file
         try {
-            IOFile.writeToFile(IOFile.USER_PATH,userList);
+            IOFile.writeToFile(IOFile.USER_PATH, userList);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -76,7 +123,7 @@ public class IUserIplm implements IUserDesign {
 
         // sau khi delete lưu lại nó vào file
         try {
-            IOFile.writeToFile(IOFile.USER_PATH,userList);
+            IOFile.writeToFile(IOFile.USER_PATH, userList);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -84,52 +131,52 @@ public class IUserIplm implements IUserDesign {
 
     @Override
     public void searchUserByName() {
-        if (userList.isEmpty()){
+        if (userList == null || userList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("Nhập tên người dùng muốn tìm kiếm :");
             String inputName = InputMethods.getString();
-            List<User> userListFilterByName = userList.stream().filter(user -> user.getUsername().contains(inputName)).toList();
+            List<User> userListFilterByName = userList.stream().filter(user -> user.getFullName().contains(inputName)).toList();
             System.out.printf("Danh sách người dùng tìm kiếm theo từ khóa %s \n", inputName);
-            userListFilterByName.forEach(User::displayData);
+            userListFilterByName.forEach(User::displayDataForAdmin);
         }
     }
 
     @Override
     public void updateUserStatus() {
-        if (userList.isEmpty()){
+        if (userList == null || userList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
         } else {
-            System.out.println("Nhập tên người dùng muốn thay đổi trạng thái :");
-            String inputName = InputMethods.getString();
-            User userSearchByName = userList.stream().filter(user -> user.getUsername().contains(inputName)).findFirst().orElse(null);
-            if (userSearchByName != null) {
-                do {
-                    System.out.printf("Bạn có muốn thay đổi trạng thái của người dùng  %s không ? \n", userSearchByName.getUsername());
-                    System.out.println("1. Có");
-                    System.out.println("2. Không");
-                    System.out.println("Nhập lựa chọn của bạn : ");
-                    choice = InputMethods.getByte();
-                    switch (choice) {
-                        case 1:
-                            userSearchByName.setStatus(!userSearchByName.isStatus());
-                            try {
-                                IOFile.writeToFile(IOFile.USER_PATH, userList);
-                            } catch (FileNotFoundException e) {
-                                throw new RuntimeException(e);
-                            }
-                            System.out.println(Messages.UPDATE_STATUS_SUCESS);
-                            break;
-                        case 2:
-                            return;
-                        default:
-                            System.err.println(Messages.SELECT_INVALID);
+            do {
+                System.out.println("Nhập ID người dùng muốn thay đổi trạng thái :");
+                int inputID = InputMethods.getInteger();
+                for (int i = 0; i < userList.size(); i++) {
+                    if (userList.get(i).getUserId() == inputID) {
+                        System.out.printf("Bạn có muốn thay đổi trạng thái của người dùng  %s không ? \n", userList.get(i).getUsername());
+                        System.out.println("1. Có");
+                        System.out.println("2. Không");
+                        System.out.println("Nhập lựa chọn của bạn : ");
+                        choice = InputMethods.getByte();
+                        switch (choice) {
+                            case 1:
+                                userList.get(i).setStatus(!userList.get(i).isStatus());
+                                try {
+                                    IOFile.writeToFile(IOFile.USER_PATH, userList);
+                                } catch (FileNotFoundException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                System.out.println(Messages.UPDATE_STATUS_SUCESS);
+                                userList.get(i).displayDataForAdmin();
+                                break;
+                            case 2:
+                                return;
+                            default:
+                                System.err.println(Messages.SELECT_INVALID);
+                        }
                     }
-                } while (true);
-
-            } else {
-                System.err.println(Messages.NAME_NOT_FOUND);
-            }
+                }
+                break;
+            } while (true);
         }
     }
 }

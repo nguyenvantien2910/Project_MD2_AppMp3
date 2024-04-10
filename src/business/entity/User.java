@@ -3,8 +3,13 @@ package business.entity;
 import business.utils.Messages;
 import org.mindrot.jbcrypt.BCrypt;
 import business.utils.InputMethods;
+
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+
+import static presentation.Main.userList;
 
 public class User implements Serializable {
     private int userId;
@@ -17,15 +22,15 @@ public class User implements Serializable {
     private String avatar;
     private String phone;
     private Integer accountType;
-    private String createAt;
-    private String updateAt;
+    private LocalDate createAt;
+    private LocalDate updateAt;
     private double wallet;
 
     public User() {
         this.status = true;
     }
 
-    public User(int userId, String username, String email, String fullName, String password, boolean role, String avatar, String phone, Integer accountType, String createAt, String updateAt, double wallet) {
+    public User(int userId, String username, String email, String fullName, boolean status, String password, boolean role, String avatar, String phone, Integer accountType, LocalDate createAt, LocalDate updateAt, double wallet) {
         this.userId = userId;
         this.username = username;
         this.email = email;
@@ -113,7 +118,7 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
-    public int getAccountType() {
+    public Integer getAccountType() {
         return accountType;
     }
 
@@ -121,19 +126,19 @@ public class User implements Serializable {
         this.accountType = accountType;
     }
 
-    public String getCreateAt() {
+    public LocalDate getCreateAt() {
         return createAt;
     }
 
-    public void setCreateAt(String createAt) {
+    public void setCreateAt(LocalDate createAt) {
         this.createAt = createAt;
     }
 
-    public String getUpdateAt() {
+    public LocalDate getUpdateAt() {
         return updateAt;
     }
 
-    public void setUpdateAt(String updateAt) {
+    public void setUpdateAt(LocalDate updateAt) {
         this.updateAt = updateAt;
     }
 
@@ -141,12 +146,13 @@ public class User implements Serializable {
         return wallet;
     }
 
-    public void setWallet(Double wallet) {
+    public void setWallet(double wallet) {
         this.wallet = wallet;
     }
 
     //inputData()
-    public void inputData(boolean isAdminAdd) {
+    public void inputData() {
+        this.userId = findMaxId();
         this.username = inputUserName();
         this.fullName = inputFullName();
         this.email = inputEmail();
@@ -155,7 +161,7 @@ public class User implements Serializable {
             inputPassword();
             System.out.println("Nhập mật khẩu xác nhận: ");
             String inputConfirmPassword = InputMethods.getString();
-            if (BCrypt.checkpw(inputConfirmPassword,this.password)) {
+            if (BCrypt.checkpw(inputConfirmPassword, this.password)) {
                 break;
             } else {
                 System.err.println(Messages.CONFIRM_PASSWORD_ERROR);
@@ -163,16 +169,11 @@ public class User implements Serializable {
         } while (true);
         this.phone = inputPhone();
         this.avatar = inputAvatar();
-        if (isAdminAdd) {
-            this.status = inputStatus();
-            this.accountType = inputAccountType();
-        } else {
-            this.status = true;
-            this.accountType = 1;
-        }
-        setCreateAt(String.valueOf(LocalDateTime.now()));
-        setUpdateAt(null);
-        setWallet(0.0);
+        this.status = true;
+        this.accountType = 1;
+        this.createAt = LocalDate.now();
+        this.updateAt = LocalDate.now();
+        this.wallet = 100.0f;
     }
 
     private Integer inputAccountType() {
@@ -222,7 +223,7 @@ public class User implements Serializable {
     }
 
     public void inputPassword() {
-        this.password = BCrypt.hashpw(InputMethods.getString(),BCrypt.gensalt(5));
+        this.password = BCrypt.hashpw(InputMethods.getString(), BCrypt.gensalt(5));
     }
 
     public String inputPhone() {
@@ -243,22 +244,23 @@ public class User implements Serializable {
         return InputMethods.getString();
     }
 
+    private int findMaxId() {
+        int maxUserId = userList.stream()
+                .map(User::getUserId)
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+        return maxUserId + 1;
+    }
+
     //displayData()
-    public String displayData() {
-        return "User{" +
-                "userId=" + userId +
-                ", username='" + username + '\'' +
-                ", email='" + email + '\'' +
-                ", fullName='" + fullName + '\'' +
-                ", status=" + (status ? "Active" : "Block") +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", avatar='" + avatar + '\'' +
-                ", phone='" + phone + '\'' +
-                ", accountType=" + accountType +
-                ", createAt='" + createAt + '\'' +
-                ", updateAt='" + updateAt + '\'' +
-                ", wallet=" + wallet +
-                '}';
+    public void displayDataForUser() {
+        System.out.printf("| UserName : %-20s | Email : %-25s | FullName : %-25s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
+                this.username, this.email, this.fullName, this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium", this.wallet);
+    }
+
+    public void displayDataForAdmin() {
+        System.out.printf("| ID : %-3d | UserName : %-20s | Email : %-25s | FullName : %-25s | Status : %-10s | Password : %-25s | Role : %-12s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f | CreateAt : %-15s | UpdateAt : %-15s\n",
+                this.userId, this.username, this.email, this.fullName, this.status ? "Active" : "Inactive", this.password, this.role ? "Admin" : "User", this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium",
+                this.wallet, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 }

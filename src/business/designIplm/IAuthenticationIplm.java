@@ -11,16 +11,10 @@ import presentation.user.UserMenu;
 
 import java.io.FileNotFoundException;
 import java.util.Comparator;
-import java.util.List;
+
+import static presentation.Main.userList;
 
 public class IAuthenticationIplm implements IAuthentication {
-    //Khai báo biến dùng chung
-    private static List<User> userList;
-
-    static {
-        userList = IOFile.readFromFile(IOFile.USER_PATH);
-    }
-
     //Tim kiếm user theo tên
     private User getUserFromUsername(String username) {
         return userList.stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
@@ -28,15 +22,11 @@ public class IAuthenticationIplm implements IAuthentication {
 
     //Id tự tăng
     private int getNewId() {
-        if (!userList.isEmpty()) {
-            Integer maxUserId = userList.stream()
-                    .map(User::getUserId)
-                    .max(Comparator.naturalOrder())
-                    .orElse(0);
-            return maxUserId + 1;
-        } else {
-            return 1;
-        }
+        int maxUserId = userList.stream()
+                .map(User::getUserId)
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+        return maxUserId + 1;
     }
 
     @Override
@@ -92,16 +82,16 @@ public class IAuthenticationIplm implements IAuthentication {
             }
         }
     }
-    
+
     @Override
     public void register() {
         System.out.println("=========== REGISTER ===========");
         User user = new User();
-        user.inputData(false);
+        user.inputData();
         user.setUserId(getNewId());
-        IUserIplm.getUserList().add(user);
+        userList.add(user);
         try {
-            IOFile.writeToFile(IOFile.USER_PATH, IUserIplm.getUserList());
+            IOFile.writeToFile(IOFile.USER_PATH, userList);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }

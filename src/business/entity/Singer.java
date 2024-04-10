@@ -1,6 +1,12 @@
 package business.entity;
 
+import business.utils.InputMethods;
+import business.utils.Messages;
+
 import java.io.Serializable;
+import java.util.Comparator;
+
+import static presentation.Main.singerList;
 
 public class Singer implements Serializable {
     private Integer singerId;
@@ -50,15 +56,45 @@ public class Singer implements Serializable {
         this.status = status;
     }
 
-    public String displayData() {
-        return "Singer{" +
-                "singerId=" + singerId +
-                ", singerName='" + singerName + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + (status ? "Đang hoạt động" : "Ngừng hoạt động") +
-                '}';
+    public void displayData() {
+        System.out.printf("|Singer ID : %-5s | Singer Name : %-20s | Description : %-30s | Status : %-15s |\n",
+                this.singerId, this.singerName, this.description, this.status ? "Đang hoạt động" : "Ngừng hoạt động");
     }
 
     public void inputData() {
+        this.singerId = findMaxId();
+        this.singerName = inputSingerName();
+        this.description = inputSingerDescription();
+        this.status = inputSingerStatus();
+    }
+
+    private int findMaxId() {
+        int maxSingerId = singerList.stream()
+                .map(Singer::getSingerId)
+                .max(Comparator.naturalOrder())
+                .orElse(0);
+        return maxSingerId + 1;
+    }
+
+    private boolean inputSingerStatus() {
+        System.out.println("Nhập trạng thái cho ca sĩ (true/false) :");
+        return InputMethods.getBoolean();
+    }
+
+    private String inputSingerDescription() {
+        System.out.println("Nhập trạng mô tả cho ca sĩ :");
+        return InputMethods.getString();
+    }
+
+    private String inputSingerName() {
+        do {
+            System.out.println("Nhập tên cho ca sĩ : ");
+            String inputName = InputMethods.getString();
+            if (!inputName.trim().isBlank()) {
+                return inputName;
+            } else {
+                System.err.println(Messages.EMTY_ERROR);
+            }
+        } while (true);
     }
 }
