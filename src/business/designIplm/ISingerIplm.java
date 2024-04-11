@@ -199,10 +199,11 @@ public class ISingerIplm implements ISingerDesign {
                         throw new RuntimeException(e);
                     }
                     System.out.println(Messages.DELETE_SUCESS);
+                    break;
                 }
             }
             if (!isExits) {
-                System.err.println(Messages.NAME_NOT_FOUND);
+                System.err.println(Messages.ID_NOT_FOUND);
             }
         }
     }

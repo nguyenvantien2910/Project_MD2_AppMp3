@@ -116,7 +116,7 @@ public class IAlbumIplm implements IAlbumDesign {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("Nhập ID album muốn cập nhật thông tin :");
-            byte inputID = InputMethods.getByte();
+            int inputID = InputMethods.getInteger();
             for (int i = 0; i < albumList.size(); i++) {
                 if (albumList.get(i).getId() == inputID) {
                     do {
@@ -200,36 +200,41 @@ public class IAlbumIplm implements IAlbumDesign {
 
     @Override
     public void handleDelete() {
-        if (albumList.isEmpty()) {
+        if (albumList.isEmpty() || albumList == null) {
             System.err.println(Messages.EMTY_LIST);
         } else {
-            System.out.println("Nhập tên album muốn thực hiện xóa :");
-            String inputSearchName = InputMethods.getString().toLowerCase();
-            int deleteIndex = findIndexByName(inputSearchName);
-            if (deleteIndex != -1) {
-                albumList.remove(deleteIndex);
-                // sau khi delete lưu lại nó vào file
-                try {
-                    IOFile.writeToFile(IOFile.ALBUM_PATH, albumList);
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
+            System.out.println("Nhập ID album muốn thực hiện xóa :");
+            int inputID = InputMethods.getInteger();
+            boolean isExits = false;
+            for (int i = 0; i < albumList.size(); i++) {
+                if (albumList.get(i).getId() == inputID) {
+                    isExits = true;
+                    albumList.remove(i);
+                    // sau khi delete lưu lại nó vào file
+                    try {
+                        IOFile.writeToFile(IOFile.ALBUM_PATH, albumList);
+                    } catch (FileNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println(Messages.DELETE_SUCESS);
+                    break;
                 }
-                System.out.println();
-            } else {
-                System.err.println(Messages.NAME_NOT_FOUND);
+            }
+            if (!isExits) {
+                System.err.println(Messages.ID_NOT_FOUND);
             }
         }
     }
 
     @Override
     public void searchAlbumByName() {
-        if (albumList.isEmpty()) {
+        if (albumList.isEmpty() || albumList == null) {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("Nhập tên album muốn tìm kiếm : ");
             String inputSearchName = InputMethods.getString().toLowerCase();
 
-            List<Album> albumListFilterBySearchKey = albumList.stream().filter(singer -> singer.getName().toLowerCase().contains(inputSearchName)).toList();
+            List<Album> albumListFilterBySearchKey = albumList.stream().filter(album -> album.getName().toLowerCase().contains(inputSearchName)).toList();
             if (albumListFilterBySearchKey.isEmpty()) {
                 System.err.println(Messages.NAME_NOT_FOUND);
             } else {
