@@ -8,11 +8,10 @@ import business.utils.Messages;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.FileNotFoundException;
-import java.util.Comparator;
 import java.util.List;
 
-import static presentation.Main.*;
-import static presentation.Main.singerList;
+import static presentation.Login.*;
+import static presentation.Login.singerList;
 
 public class IUserIplm implements IUserDesign {
     private static byte choice;

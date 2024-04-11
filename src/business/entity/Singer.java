@@ -6,7 +6,7 @@ import business.utils.Messages;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import static presentation.Main.singerList;
+import static presentation.Login.singerList;
 
 public class Singer implements Serializable {
     private Integer singerId;

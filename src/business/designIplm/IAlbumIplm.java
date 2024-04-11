@@ -7,11 +7,10 @@ import business.utils.InputMethods;
 import business.utils.Messages;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.List;
 
-import static presentation.Main.albumList;
-import static presentation.Main.singerList;
+import static presentation.Login.albumList;
+import static presentation.Login.singerList;
 
 public class IAlbumIplm implements IAlbumDesign {
     private static byte choice;

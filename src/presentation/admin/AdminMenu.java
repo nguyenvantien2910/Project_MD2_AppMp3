@@ -2,7 +2,7 @@ package presentation.admin;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
-import static presentation.Main.*;
+import static presentation.Login.*;
 
 public class AdminMenu {
     private static AdminMenu adminMenu = new AdminMenu();

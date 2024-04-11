@@ -12,8 +12,8 @@ import presentation.user.UserMenu;
 import java.io.FileNotFoundException;
 import java.util.Comparator;
 
-import static presentation.Main.userList;
-import static presentation.Main.userLoginToUsed;
+import static presentation.Login.userList;
+import static presentation.Login.userLoginToUsed;
 
 public class IAuthenticationIplm implements IAuthentication {
     //Tim kiếm user theo tên

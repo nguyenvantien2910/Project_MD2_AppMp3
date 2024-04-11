@@ -1,11 +1,10 @@
 package presentation.user;
 
-import business.designIplm.ISongIplm;
 import business.designIplm.IUserIplm;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
-import static presentation.Main.*;
+import static presentation.Login.*;
 
 public class UserMenu {
     private static UserMenu userMenu = new UserMenu();

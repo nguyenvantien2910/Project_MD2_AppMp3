@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static presentation.Main.*;
-import static presentation.Main.albumList;
+import static presentation.Login.*;
+import static presentation.Login.albumList;
 
 public class ISongIplm implements ISongDesign {
     private static byte choice;

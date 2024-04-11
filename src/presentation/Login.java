@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main {
+public class Login {
     //Khai báo biến dùng chung
     public static List<User> userList;
     public static List<Song> songList;

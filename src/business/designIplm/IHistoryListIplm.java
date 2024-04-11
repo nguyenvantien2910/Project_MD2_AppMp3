@@ -8,7 +8,7 @@ import business.utils.Messages;
 import java.io.FileNotFoundException;
 import java.time.LocalDate;
 
-import static presentation.Main.*;
+import static presentation.Login.*;
 
 public class IHistoryListIplm {
 

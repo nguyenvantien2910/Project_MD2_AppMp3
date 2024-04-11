@@ -9,7 +9,7 @@ import business.utils.Messages;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import static presentation.Main.singerList;
+import static presentation.Login.singerList;
 
 public class ISingerIplm implements ISingerDesign {
     private static byte choice;

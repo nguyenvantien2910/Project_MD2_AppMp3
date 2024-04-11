@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
-import static presentation.Main.historyList;
+import static presentation.Login.historyList;
 
 public class History implements Serializable {
     private int historyId;

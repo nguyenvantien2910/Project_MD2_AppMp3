@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static presentation.Main.userList;
+import static presentation.Login.userList;
 
 public class User implements Serializable {
     private int userId;

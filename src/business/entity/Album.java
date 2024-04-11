@@ -1,17 +1,13 @@
 package business.entity;
 
-import business.designIplm.IAlbumIplm;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
-import static presentation.Main.albumList;
-import static presentation.Main.singerList;
+import static presentation.Login.albumList;
+import static presentation.Login.singerList;
 
 public class Album implements Serializable {
     private int id;
