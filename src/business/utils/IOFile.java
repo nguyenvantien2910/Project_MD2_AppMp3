@@ -1,5 +1,7 @@
 package business.utils;
 
+import business.entity.User;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,9 +13,9 @@ public class IOFile {
     public static final String SINGER_PATH = "src/business/data/singers.txt";
     public static final String ALBUM_PATH = "src/business/data/albums.txt";
     public static final String HISTORY_PATH = "src/business/data/histories.txt";
+    public static final String LOGIN_USER_PATH = "src/business/data/loginUserInfo.txt";
 
-
-    //Ghi file
+    //Ghi data vào file
     public static <T> void writeToFile(String path, List<T> list) throws FileNotFoundException {
         File file = new File(path);
         if (!file.exists()) {
@@ -51,7 +53,7 @@ public class IOFile {
     }
 
 
-    //Đọc file
+    //Đọc data từ file
     public static <T> List<T> readFromFile(String path) {
         List<T> list = new ArrayList<>();
         FileInputStream fis = null;
@@ -61,8 +63,12 @@ public class IOFile {
             fis = new FileInputStream(path);
             ois = new ObjectInputStream(fis);
             list = (List<T>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException();
+        } catch (IOException e) {
+            throw new RuntimeException();
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException();
         } finally {
             try {
                 if (fis != null) {
@@ -76,5 +82,62 @@ public class IOFile {
             }
         }
         return list;
+    }
+
+    // Lấy thông tin người dùng đang đăng nhập
+    public static User getUserLogin() {
+        FileInputStream fis = null;
+        ObjectInputStream ois = null;
+        User user = new User();
+        try {
+            fis = new FileInputStream(LOGIN_USER_PATH);
+            ois = new ObjectInputStream(fis);
+            user = (User) ois.readObject();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (fis != null) {
+                    fis.close();
+                }
+                if (ois != null) {
+                    ois.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return user;
+    }
+
+    // Cập nhật lại thông tin của người đang dăng nhập
+    public static void updateUserLogin(User user) {
+        File newFile = new File(IOFile.LOGIN_USER_PATH);
+        FileOutputStream fos = null;
+        ObjectOutputStream oos = null;
+        try {
+            fos = new FileOutputStream(LOGIN_USER_PATH);
+            oos = new ObjectOutputStream(fos);
+            oos.writeObject(user);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+                if (oos != null) {
+                    oos.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

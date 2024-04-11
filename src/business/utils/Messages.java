@@ -6,7 +6,10 @@ public class Messages {
     public static String ADD_NEW_SUCESS = "Thêm mới thành công !";
     public static String UPDATE_INFO_SUCESS = "Cập nhật thông tin thành công !";
     public static String UPDATE_STATUS_SUCESS = "Cập nhật trạng thái thành công !";
+    public static String UPDATE_PASSWORD_SUCESS = "Cập nhật mật khẩu thành công !";
     public static String DELETE_SUCESS = "Xóa thành công !";
+    public static String BUY_SUCESS = "Mua bài hát thành công !";
+    public static String BOOKMARK_SUCESS = "Thêm bài hát yêu thích thành công !";
     public static String EXIT_SUCESS = "Đã thoát chương trình !";
     public static String USERNAME_INVALID = "Tên đăng nhập không chính xác, mời nhập lại !";
     public static String PASSWORD_INVALID = "Mật khẩu đăng nhập không chính xác, mời nhập lại !";

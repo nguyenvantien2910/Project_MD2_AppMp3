@@ -1,18 +1,159 @@
 package business.designIplm;
 
 import business.design.IUserDesign;
-import business.entity.User;
+import business.entity.*;
 import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.FileNotFoundException;
+import java.util.Comparator;
 import java.util.List;
 
-import static presentation.Main.userList;
+import static presentation.Main.*;
+import static presentation.Main.singerList;
 
 public class IUserIplm implements IUserDesign {
     private static byte choice;
+    //Danh sách các ca sĩ đang hoạt động
+    private static List<Singer> singerListAvailable = singerList.stream().filter(Singer::isStatus).toList();
+
+    public static void showInfoUserLogin() {
+        System.out.println("========= LOGIN USER INFORMATION ========");
+        userLoginToUsed.displayDataForUser();
+    }
+
+    public static void updateInfomation() {
+        System.out.println("========= UPDATE INFORMATION ========");
+        System.out.println("1. Chỉnh sửa họ và tên ");
+        System.out.println("2. Chỉnh sửa hình ảnh đại diện ");
+        System.out.println("3. Chỉnh sửa số điện thoại ");
+        System.out.println("4. Thoát ");
+
+        System.out.println("Nhập lựa chọn của bạn ");
+        choice = InputMethods.getByte();
+
+        switch (choice) {
+            case 1:
+                System.out.println("Nhập họ và tên mới");
+                userLoginToUsed.setFullName(InputMethods.getString());
+                break;
+
+            case 2:
+                System.out.println("Nhập link ảnh đại diện : ");
+                userLoginToUsed.setAvatar(InputMethods.getString());
+                break;
+
+            case 3:
+                System.out.println("Nhập số điện thoại mới : ");
+                userLoginToUsed.setPhone(InputMethods.getString());
+                break;
+
+            case 4:
+                return;
+
+            default:
+                System.err.println(Messages.SELECT_INVALID);
+        }
+
+        for (int i = 0; i < userList.size(); i++) {
+            if (userList.get(i).getUserId() == userLoginToUsed.getUserId()) {
+                userList.set(i, userLoginToUsed);
+                break;
+            }
+        }
+        // sau khi thêm lưu lại nó vào file
+        try {
+            IOFile.writeToFile(IOFile.USER_PATH, userList);
+            System.out.println(Messages.UPDATE_INFO_SUCESS);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void updatePassword() {
+        String inputPW;
+        String inputConfirmPW;
+        do {
+            System.out.println("Nhập mật khẩu mới :");
+            inputPW = InputMethods.getString();
+
+            System.out.println("Nhập mật khẩu xác nhận: ");
+            inputConfirmPW = InputMethods.getString();
+
+        } while (!inputConfirmPW.equals(inputPW));
+
+        userLoginToUsed.setPassword(BCrypt.hashpw(inputPW, BCrypt.gensalt(5)));
+        for (int i = 0; i < userList.size(); i++) {
+            if (userList.get(i).getUserId() == userLoginToUsed.getUserId()) {
+                userList.set(i, userLoginToUsed);
+                break;
+            }
+        }
+        // sau khi thêm lưu lại nó vào file
+        try {
+            IOFile.writeToFile(IOFile.USER_PATH, userList);
+            System.out.println(Messages.UPDATE_PASSWORD_SUCESS);
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void displayBuyHistory() {
+        System.out.println("========= BUY HISTORY ========");
+        historyList.stream().filter(History -> History.getUserId() == userLoginToUsed.getUserId()).forEach(History::displayData);
+    }
+
+
+    public void showAllBookMarkSong() {
+        //get danh sách bài hát yêu thích của user đang login
+        List<Song> bookmarkSongListOfLoginUser = userLoginToUsed.getFavoriteSongs();
+
+        System.out.println("========== DANH SÁCH BÀI HÁT YÊU THÍCH=========");
+        bookmarkSongListOfLoginUser.forEach(Song::displayDataForUser);
+    }
+
+    public void searchSingerByName() {
+        if (singerList == null || singerList.isEmpty()) {
+            System.err.println(Messages.EMTY_LIST);
+        } else {
+            System.out.println("Nhập tên ca sĩ muốn tìm kiếm : ");
+            String inputSearchName = InputMethods.getString().toLowerCase();
+
+            List<Singer> singerListFilterBySearchKey = singerListAvailable.stream().filter(singer -> singer.getSingerName().toLowerCase().contains(inputSearchName)).toList();
+            if (singerListFilterBySearchKey.isEmpty()) {
+                System.err.println(Messages.NAME_NOT_FOUND);
+            } else {
+                System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
+                singerListFilterBySearchKey.forEach(Singer::displayDataForUser);
+            }
+        }
+    }
+
+    public void searchSongByName() {
+        if (songList == null || songList.isEmpty()) {
+            System.err.println(Messages.EMTY_LIST);
+        } else {
+            System.out.println("Nhập tên bài hát muốn tìm kiếm : ");
+            String inputSearchName = InputMethods.getString().toLowerCase();
+
+            List<Song> songListFilterBySearchKey = songList.stream().filter(song -> song.getSongName().toLowerCase().contains(inputSearchName)).toList();
+            if (songListFilterBySearchKey.isEmpty()) {
+                System.err.println(Messages.NAME_NOT_FOUND);
+            } else {
+                System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
+                songListFilterBySearchKey.forEach(Song::displayDataForUser);
+            }
+        }
+    }
+
+
+    public void showTrendingAlbum() {
+    }
+
+    public void showTrendingArtist() {
+    }
 
     @Override
     public Integer findIndexByName(String name) {
@@ -179,4 +320,5 @@ public class IUserIplm implements IUserDesign {
             } while (true);
         }
     }
+
 }

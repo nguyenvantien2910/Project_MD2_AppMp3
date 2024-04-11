@@ -11,7 +11,7 @@ public class History implements Serializable {
     private int historyId;
     private int songId;
     private int userId;
-    private String orderAt;
+    private LocalDate orderAt;
     private Double totalPrice;
     private Integer typePackage;
     private LocalDate createAt;
@@ -20,7 +20,7 @@ public class History implements Serializable {
     public History() {
     }
 
-    public History(int historyId, int songId, int userId, String orderAt, Double totalPrice, Integer typePackage, LocalDate createAt, LocalDate expriedAt) {
+    public History(int historyId, int songId, int userId, LocalDate orderAt, Double totalPrice, Integer typePackage, LocalDate createAt, LocalDate expriedAt) {
         this.historyId = historyId;
         this.songId = songId;
         this.userId = userId;
@@ -55,11 +55,11 @@ public class History implements Serializable {
         this.userId = userId;
     }
 
-    public String getOrderAt() {
+    public LocalDate getOrderAt() {
         return orderAt;
     }
 
-    public void setOrderAt(String orderAt) {
+    public void setOrderAt(LocalDate orderAt) {
         this.orderAt = orderAt;
     }
 
@@ -97,14 +97,14 @@ public class History implements Serializable {
 
     public void displayData() {
         System.out.printf("|History ID: %-5d | Song ID : %-5d | UserId : %-5d | OrderAt : %-10s | TotalPrice : %-12.2f | TypePackage : %-15s | CreateAt : %-12s | ExpriedAt : %-12s\n",
-                this.historyId, this.songId, this.userId, this.orderAt, this.totalPrice, this.typePackage, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.expriedAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                this.historyId, this.songId, this.userId, this.orderAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.totalPrice, this.typePackage, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.expriedAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 
     public void inputData() {
         this.historyId = findIdMax();
     }
 
-    private int findIdMax() {
+    public int findIdMax() {
         int maxHistoryId = historyList.stream()
                 .map(History::getHistoryId)
                 .max(Comparator.naturalOrder())

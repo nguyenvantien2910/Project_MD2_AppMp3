@@ -207,4 +207,7 @@ public class ISingerIplm implements ISingerDesign {
             }
         }
     }
+
+    public void showTrendingSinger() {
+    }
 }

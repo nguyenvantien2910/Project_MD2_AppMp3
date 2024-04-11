@@ -61,6 +61,11 @@ public class Singer implements Serializable {
                 this.singerId, this.singerName, this.description, this.status ? "Đang hoạt động" : "Ngừng hoạt động");
     }
 
+    public void displayDataForUser() {
+        System.out.printf("|Singer ID : %-5s | Singer Name : %-20s | Description : %-30s |\n",
+                this.singerId, this.singerName, this.description);
+    }
+
     public void inputData() {
         this.singerId = findMaxId();
         this.singerName = inputSingerName();

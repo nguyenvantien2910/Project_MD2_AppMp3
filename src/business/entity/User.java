@@ -7,7 +7,9 @@ import business.utils.InputMethods;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import static presentation.Main.userList;
 
@@ -25,9 +27,14 @@ public class User implements Serializable {
     private LocalDate createAt;
     private LocalDate updateAt;
     private double wallet;
+    private List<Song> favoriteSongs;
 
     public User() {
         this.status = true;
+        this.createAt = LocalDate.now();
+        this.updateAt = LocalDate.now();
+        this.wallet = 0;
+        this.favoriteSongs = new ArrayList<>();
     }
 
     public User(int userId, String username, String email, String fullName, boolean status, String password, boolean role, String avatar, String phone, Integer accountType, LocalDate createAt, LocalDate updateAt, double wallet) {
@@ -44,6 +51,7 @@ public class User implements Serializable {
         this.createAt = createAt;
         this.updateAt = updateAt;
         this.wallet = wallet;
+        this.favoriteSongs = new ArrayList<>();
     }
 
     public int getUserId() {
@@ -150,6 +158,14 @@ public class User implements Serializable {
         this.wallet = wallet;
     }
 
+    public List<Song> getFavoriteSongs() {
+        return favoriteSongs;
+    }
+
+    public void setFavoriteSongs(List<Song> favoriteSongs) {
+        this.favoriteSongs = favoriteSongs;
+    }
+
     //inputData()
     public void inputData() {
         this.userId = findMaxId();
@@ -174,6 +190,7 @@ public class User implements Serializable {
         this.createAt = LocalDate.now();
         this.updateAt = LocalDate.now();
         this.wallet = 100.0f;
+        this.favoriteSongs = new ArrayList<>();
     }
 
     private Integer inputAccountType() {

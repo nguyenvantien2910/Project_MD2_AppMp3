@@ -18,12 +18,13 @@ public class Main {
     public static List<Singer> singerList;
     public static List<Album> albumList;
     public static List<History> historyList;
+    public static User userLoginToUsed;
 
     public static ISongIplm iSongIplm = new ISongIplm();
     public static ISingerIplm iSingerIplm = new ISingerIplm();
     public static IUserIplm iUserIplm = new IUserIplm();
     public static IAlbumIplm iAlbumIplm = new IAlbumIplm();
-    public static IHistoryList iHistoryIplm = new IHistoryList();
+    public static IHistoryListIplm iHistoryIplm = new IHistoryListIplm();
 
     static {
         File userFile = new File(IOFile.USER_PATH);
@@ -31,6 +32,7 @@ public class Main {
         File singerFile = new File(IOFile.SINGER_PATH);
         File historyFile = new File(IOFile.HISTORY_PATH);
         File albumFile = new File(IOFile.ALBUM_PATH);
+        File loginUserFile = new File(IOFile.LOGIN_USER_PATH);
 
         if (userFile.length() == 0) {
             userList = new ArrayList<>();
@@ -86,6 +88,7 @@ public class Main {
         } else {
             historyList = IOFile.readFromFile(IOFile.HISTORY_PATH);
         }
+
     }
 
     public static void main(String[] args) {

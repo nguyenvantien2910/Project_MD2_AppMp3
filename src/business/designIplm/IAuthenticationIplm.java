@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.util.Comparator;
 
 import static presentation.Main.userList;
+import static presentation.Main.userLoginToUsed;
 
 public class IAuthenticationIplm implements IAuthentication {
     //Tim kiếm user theo tên
@@ -68,6 +69,7 @@ public class IAuthenticationIplm implements IAuthentication {
             boolean checkLogin = BCrypt.checkpw(inputPassword, userLogin.getPassword());
             //Kiểm tra role của user đăng nhập
             if (checkLogin) {
+                userLoginToUsed = userLogin;
                 if (userLogin.isRole()) {
                     AdminMenu.getInstance().displayAdminMenu();
                 } else {

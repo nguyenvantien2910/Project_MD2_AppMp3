@@ -1,5 +1,7 @@
 package presentation.user;
 
+import business.designIplm.ISongIplm;
+import business.designIplm.IUserIplm;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
@@ -66,6 +68,7 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    IUserIplm.displayBuyHistory();
                     break;
                 case 2:
                     isExit = true;
@@ -88,10 +91,13 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    IUserIplm.showInfoUserLogin();
                     break;
                 case 2:
+                    IUserIplm.updateInfomation();
                     break;
                 case 3:
+                    IUserIplm.updatePassword();
                     break;
                 case 4:
                     isExit = true;
@@ -112,6 +118,7 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iUserIplm.showAllBookMarkSong();
                     break;
                 case 2:
                     isExit = true;
@@ -136,16 +143,19 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
-                    iSingerIplm.searchSingerByName();
+                    iUserIplm.searchSingerByName();
                     break;
                 case 2:
                     iAlbumIplm.searchAlbumByName();
                     break;
                 case 3:
+                    iUserIplm.searchSongByName();
                     break;
                 case 4:
+                    iHistoryIplm.addNewHistory();
                     break;
                 case 5:
+                    iSongIplm.bookmarkSongToFavoriteList();
                     break;
                 case 6:
                     isExit = true;
@@ -159,28 +169,28 @@ public class UserMenu {
     private void displayHomePageMenu() {
         do {
             System.out.println("==========HOME PAGE==========");
-            System.out.println("1. Tìm kiếm bài hát/ca sĩ/album");
-            System.out.println("2. Hiển thị bài hát");
-            System.out.println("3. Hiển thị bài hát trending");
-            System.out.println("4. Hiển thị ca sĩ trending");
-            System.out.println("5. Hiển thị album trending");
-            System.out.println("6. Thoát");
+            System.out.println("1. Hiển thị bài hát");
+            System.out.println("2. Hiển thị bài hát trending");
+            System.out.println("3. Hiển thị ca sĩ trending");
+            System.out.println("4. Hiển thị album trending");
+            System.out.println("5. Thoát");
             System.out.println(" Nhập lựa chọn của bạn : ");
 
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iSongIplm.showAllSongForUser();
                     break;
                 case 2:
-                    iSongIplm.handleShow();
+                    iSongIplm.showTrendingSong();
                     break;
                 case 3:
+                    iSingerIplm.showTrendingSinger();
                     break;
                 case 4:
+                    iAlbumIplm.showTrendingAlbum();
                     break;
                 case 5:
-                    break;
-                case 6:
                     isExit = true;
                     return;
                 default:
