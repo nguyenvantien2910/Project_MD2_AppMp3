@@ -8,6 +8,7 @@ import business.utils.Messages;
 import business.utils.Pagination;
 import org.mindrot.jbcrypt.BCrypt;
 import presentation.Login;
+import presentation.admin.AdminMenu;
 
 import java.util.List;
 
@@ -16,6 +17,33 @@ import static business.designIplm.IAuthenticationIplm.userList;
 public class IUserIplm implements IUserDesign {
     private static byte choice;
     private boolean isExit = false;
+
+    public void displayInformation() {
+        User user = Login.user;
+        System.out.println("=========== User Information ==========");
+        user.displayData();
+        System.out.println("-----------------------------------------");
+    }
+
+    private void askAdminToAddNewUser() {
+        if (Login.user.isRole()) {
+            System.out.println("Bạn có muốn thêm mới người dùng không ?");
+            System.out.println("1. Có ");
+            System.out.println("2. Không ");
+            System.out.println("Nhập lựa chọn của bạn : ");
+            choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    handleAdd();
+                    break;
+                case 2:
+                    AdminMenu.userManagement();
+                    break;
+                default:
+                    System.err.println(Messages.SELECT_INVALID);
+            }
+        }
+    }
 
     @Override
     public Integer findIndexById(Object id) {
@@ -45,6 +73,7 @@ public class IUserIplm implements IUserDesign {
     public void handleShow() {
         if (userList == null || userList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewUser();
         } else {
             System.out.println("==========USER LIST==========");
             Pagination.paginateAndDisplay(userList, Pagination.ELEMENT_PER_PAGE);
@@ -65,12 +94,14 @@ public class IUserIplm implements IUserDesign {
     public void handleFindByName() {
         if (userList == null || userList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewUser();
         } else {
             System.out.println("Nhập tên người dùng muốn tìm kiếm :");
             String inputName = InputMethods.getString();
             List<User> userListFilterByName = userList.stream().filter(user -> user.getFullName().contains(inputName)).toList();
             System.out.printf("Danh sách người dùng tìm kiếm theo từ khóa %s \n", inputName);
-            userListFilterByName.forEach(User::displayDataForAdmin);
+            //userListFilterByName.forEach(User::displayDataForAdmin);
+            userListFilterByName.forEach(User::displayData);
         }
     }
 
@@ -78,6 +109,7 @@ public class IUserIplm implements IUserDesign {
     public void updateUserStatus() {
         if (userList == null || userList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewUser();
         } else {
             do {
                 System.out.println("Nhập ID người dùng muốn thay đổi trạng thái :");
@@ -94,7 +126,8 @@ public class IUserIplm implements IUserDesign {
                                 userList.get(i).setStatus(!userList.get(i).isStatus());
                                 IOFile.writeDataToFile(IOFile.USER_PATH, userList);
                                 System.out.println(Messages.UPDATE_STATUS_SUCESS);
-                                userList.get(i).displayDataForAdmin();
+                                //userList.get(i).displayDataForAdmin();
+                                userList.get(i).displayData();
                                 break;
                             case 2:
                                 return;
@@ -123,15 +156,26 @@ public class IUserIplm implements IUserDesign {
 
             switch (choice) {
                 case 1:
+                    System.out.printf("Tên hiện tại : \n", user.getFullName());
+                    System.out.println();
                     user.setFullName(user.inputFullName());
+                    System.out.println(Messages.UPDATE_INFO_SUCESS);
+                    user.displayData();
                     break;
 
                 case 2:
+                    System.out.printf("Link avatar hiện tại : \n", user.getAvatar());
+                    System.out.println();
                     user.setAvatar(user.inputAvatar());
+                    System.out.println(Messages.UPDATE_INFO_SUCESS);
+                    user.displayData();
                     break;
 
                 case 3:
+                    System.out.printf("Số điện thoạt hiện tại : \n",user.getPhone());
                     user.setPhone(user.inputPhone());
+                    System.out.println(Messages.UPDATE_INFO_SUCESS);
+                    user.displayData();
                     break;
 
                 case 4:
@@ -145,7 +189,6 @@ public class IUserIplm implements IUserDesign {
 
         // sau khi thêm lưu lại nó vào file
         IOFile.writeDataToFile(IOFile.USER_PATH, userList);
-        System.out.println(Messages.UPDATE_INFO_SUCESS);
     }
 
     @Override

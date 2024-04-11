@@ -6,6 +6,9 @@ import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
 import business.utils.Pagination;
+import presentation.Login;
+import presentation.admin.AdminMenu;
+import presentation.user.UserMenu;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,17 +36,19 @@ public class ISongIplm implements IGenericDesign {
     public void showTrendingSong() {
         if (songList == null || songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            UserMenu.displayHomePageMenu();
         } else {
             //Tìm top 10 bài hát có lượt nghe nhiều nhất
             List<Song> top10TrendingSongByPlayCount = songList.stream().sorted(Comparator.comparing(Song::getPlayCount).reversed()).limit(10).toList();
             System.out.println("==========TRENDING SONG==========");
-            top10TrendingSongByPlayCount.forEach(Song::displayDataForUser);
+            top10TrendingSongByPlayCount.forEach(Song::displayData);
         }
     }
 
     public void showAllSongForUser() {
         if (songList == null || songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            UserMenu.displayHomePageMenu();
         } else {
             System.out.println("==========ALL SONG==========");
             Pagination.paginateAndDisplay(songList, Pagination.ELEMENT_PER_PAGE);
@@ -54,7 +59,7 @@ public class ISongIplm implements IGenericDesign {
         //Hiển thị danh sách bài hát cho người dùng chọn
         System.out.println("==========ALL SONG==========");
         for (int i = 0; i < songList.size(); i++) {
-            songList.get(i).displayDataForUser();
+            songList.get(i).displayData();
         }
         System.out.println("Nhập ID bài hát muốn thêm vào danh sách yêu thích : ");
 
@@ -107,9 +112,30 @@ public class ISongIplm implements IGenericDesign {
     public void handleShow() {
         if (songList == null || songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddSong();
         } else {
             System.out.println("==========ALL SONG==========");
             Pagination.paginateAndDisplay(songList, 10);
+        }
+    }
+
+    private void askAdminToAddSong() {
+        if (Login.user.isRole()){
+            System.out.println("Bạn có muốn thêm mới bài hát không ?");
+            System.out.println("1. Có ");
+            System.out.println("2. Không ");
+            System.out.println("Nhập lựa chọn của bạn : ");
+            choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    handleAdd();
+                    break;
+                    case 2:
+                        AdminMenu.songManagement();
+                        break;
+                default:
+                    System.err.println(Messages.SELECT_INVALID);
+            }
         }
     }
 
@@ -117,6 +143,7 @@ public class ISongIplm implements IGenericDesign {
     public void handleEdit() {
         if (songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddSong();
         } else {
             System.out.println("Nhập ID bài hát muốn cập nhật thông tin :");
             int inputID = InputMethods.getInteger();
@@ -222,6 +249,7 @@ public class ISongIplm implements IGenericDesign {
     public void handleDelete() {
         if (songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddSong();
         } else {
             System.out.println("Nhập ID bài hát muốn thực hiện xóa :");
             int inputID = InputMethods.getInteger();
@@ -239,16 +267,18 @@ public class ISongIplm implements IGenericDesign {
     public void handleFindByName() {
         if (songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddSong();
         } else {
             System.out.println("Nhập tên bài hát muốn tìm kiếm : ");
-            String inputSearchName = InputMethods.getString().toLowerCase();
+            String inputSearchName = InputMethods.getString();
 
-            List<Song> songListFilterBySearchKey = songList.stream().filter(song -> song.getSongName().toLowerCase().contains(inputSearchName)).toList();
+            List<Song> songListFilterBySearchKey = songList.stream().filter(song -> song.getSongName().toLowerCase().contains(inputSearchName.toLowerCase())).toList();
             if (songListFilterBySearchKey.isEmpty()) {
                 System.err.println(Messages.NAME_NOT_FOUND);
             } else {
                 System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
                 songListFilterBySearchKey.forEach(Song::displayData);
+                System.out.println();
             }
         }
     }

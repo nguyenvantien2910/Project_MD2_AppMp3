@@ -75,6 +75,7 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iUserIplm.displayInformation();
                     break;
                 case 2:
                     iUserIplm.updateInfomation();
@@ -111,7 +112,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private static void displaySearchMenu() {
+    public static void displaySearchMenu() {
         do {
             System.out.println("==========SEARCH MENU==========");
             System.out.println("1. Tìm kiếm ca sĩ");
@@ -147,7 +148,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private static void displayHomePageMenu() {
+    public static void displayHomePageMenu() {
         do {
             System.out.println("==========HOME PAGE==========");
             System.out.println("1. Hiển thị bài hát");

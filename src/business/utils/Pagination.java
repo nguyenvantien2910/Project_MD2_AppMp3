@@ -17,7 +17,7 @@ public class Pagination {
 
             for (int i = startIndex; i < endIndex; i++) {
                 System.out.println(dataList.get(i));
-                // dataList.get(i).displayDataForUser();
+                //dataList.get(i);
             }
 
             System.out.println();

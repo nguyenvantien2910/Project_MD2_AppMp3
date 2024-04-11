@@ -6,6 +6,8 @@ import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
 import business.utils.Pagination;
+import presentation.Login;
+import presentation.admin.AdminMenu;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,6 +25,25 @@ public class ISingerIplm implements IGenericDesign {
             IOFile.writeDataToFile(IOFile.SINGER_PATH, singerList);
         } else {
             singerList = IOFile.getDataFormFile(IOFile.SINGER_PATH);
+        }
+    }
+    private void askAdminToAddNewSinger() {
+        if (Login.user.isRole()){
+            System.out.println("Bạn có muốn thêm mới ca sĩ không ?");
+            System.out.println("1. Có ");
+            System.out.println("2. Không ");
+            System.out.println("Nhập lựa chọn của bạn : ");
+            choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    handleAdd();
+                    break;
+                case 2:
+                    AdminMenu.singerManagement();
+                    break;
+                default:
+                    System.err.println(Messages.SELECT_INVALID);
+            }
         }
     }
 
@@ -56,6 +77,7 @@ public class ISingerIplm implements IGenericDesign {
     public void handleShow() {
         if (singerList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewSinger();
         } else {
             System.out.println("==========SINGER LIST==========");
             Pagination.paginateAndDisplay(singerList, Pagination.ELEMENT_PER_PAGE);
@@ -66,6 +88,7 @@ public class ISingerIplm implements IGenericDesign {
     public void handleEdit() {
         if (singerList == null || singerList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewSinger();
         } else {
             System.out.println("Nhập ID ca sĩ muốn cập nhật thông tin :");
             int inputSearchID = InputMethods.getInteger();
@@ -116,6 +139,7 @@ public class ISingerIplm implements IGenericDesign {
     public void handleDelete() {
         if (singerList == null || singerList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewSinger();
         } else {
             System.out.println("Nhập ID ca sĩ muốn thực hiện xóa :");
             int inputSearchID = InputMethods.getInteger();
@@ -134,16 +158,18 @@ public class ISingerIplm implements IGenericDesign {
     public void handleFindByName() {
         if (singerList == null || singerList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewSinger();
         } else {
             System.out.println("Nhập tên ca sĩ muốn tìm kiếm : ");
-            String inputSearchName = InputMethods.getString().toLowerCase();
+            String inputSearchName = InputMethods.getString();
 
-            List<Singer> singerListFilterBySearchKey = singerList.stream().filter(singer -> singer.getSingerName().toLowerCase().contains(inputSearchName)).toList();
+            List<Singer> singerListFilterBySearchKey = singerList.stream().filter(singer -> singer.getSingerName().toLowerCase().contains(inputSearchName.toLowerCase())).toList();
             if (singerListFilterBySearchKey.isEmpty()) {
                 System.err.println(Messages.NAME_NOT_FOUND);
             } else {
                 System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
                 singerListFilterBySearchKey.forEach(Singer::displayData);
+                System.out.println();
             }
         }
     }

@@ -102,7 +102,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private static void songManagement() {
+    public static void songManagement() {
         do {
             System.out.println("==========SONG MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách bài hát");
@@ -139,7 +139,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private static void albumManagement() {
+    public static void albumManagement() {
         do {
             System.out.println("==========ALBUM MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách album");
@@ -176,7 +176,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private static void singerManagement() {
+    public static void singerManagement() {
         do {
             System.out.println("==========SINGER MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách ca sĩ");
@@ -213,7 +213,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private static void userManagement() {
+    public static void userManagement() {
         do {
             System.out.println("==========USER MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách người dùng");

@@ -22,11 +22,11 @@ public class Login {
     public static IAlbumIplm iAlbumIplm = new IAlbumIplm();
     public static IHistoryIplm iHistoryIplm = new IHistoryIplm();
 
-    //auto login
+    //tự động đăng nhập
     static {
-        File loginStatus = new File(IOFile.LOGIN_USER_PATH);
+        File loginUser = new File(IOFile.LOGIN_USER_PATH);
         // nếu có một đối tượng user đã đăng nhập từ trước thì gắn user đó vào biến user
-        if (loginStatus.length() != 0) {
+        if (loginUser.length() != 0) {
             user = IOFile.getUserLogin();
         }
         // tự động đăng nhập nếu user khác null

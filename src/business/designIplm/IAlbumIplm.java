@@ -6,6 +6,8 @@ import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
 import business.utils.Pagination;
+import presentation.Login;
+import presentation.admin.AdminMenu;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,6 +27,26 @@ public class IAlbumIplm implements IGenericDesign {
             IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
         } else {
             albumList = IOFile.getDataFormFile(IOFile.ALBUM_PATH);
+        }
+    }
+
+    public void askAdminToAddNewAlbum() {
+        if (Login.user.isRole()){
+            System.out.println("Bạn có muốn thêm mới album không ?");
+            System.out.println("1. Có ");
+            System.out.println("2. Không ");
+            System.out.println("Nhập lựa chọn của bạn : ");
+            choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    handleAdd();
+                    break;
+                case 2:
+                    AdminMenu.albumManagement();
+                    break;
+                default:
+                    System.err.println(Messages.SELECT_INVALID);
+            }
         }
     }
 
@@ -57,6 +79,7 @@ public class IAlbumIplm implements IGenericDesign {
     public void handleShow() {
         if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewAlbum();
         } else {
             System.out.println("========== ALBUM LIST ==========");
             Pagination.paginateAndDisplay(albumList, Pagination.ELEMENT_PER_PAGE);
@@ -67,6 +90,7 @@ public class IAlbumIplm implements IGenericDesign {
     public void handleEdit() {
         if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewAlbum();
         } else {
             System.out.println("Nhập ID album muốn cập nhật thông tin :");
             int inputID = InputMethods.getInteger();
@@ -152,6 +176,7 @@ public class IAlbumIplm implements IGenericDesign {
     public void handleDelete() {
         if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewAlbum();
         } else {
             System.out.println("Nhập ID album muốn thực hiện xóa :");
             int inputID = InputMethods.getInteger();
@@ -170,16 +195,18 @@ public class IAlbumIplm implements IGenericDesign {
     public void handleFindByName() {
         if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
+            askAdminToAddNewAlbum();
         } else {
             System.out.println("Nhập tên album muốn tìm kiếm : ");
-            String inputSearchName = InputMethods.getString().toLowerCase();
+            String inputSearchName = InputMethods.getString();
 
-            List<Album> albumListFilterBySearchKey = albumList.stream().filter(album -> album.getName().toLowerCase().contains(inputSearchName)).toList();
+            List<Album> albumListFilterBySearchKey = albumList.stream().filter(album -> album.getName().toLowerCase().contains(inputSearchName.toLowerCase())).toList();
             if (albumListFilterBySearchKey.isEmpty()) {
                 System.err.println(Messages.NAME_NOT_FOUND);
             } else {
                 System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
                 albumListFilterBySearchKey.forEach(Album::displayData);
+                System.out.println();
             }
         }
     }

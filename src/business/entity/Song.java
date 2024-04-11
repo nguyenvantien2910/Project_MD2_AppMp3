@@ -2,6 +2,7 @@ package business.entity;
 
 import business.utils.InputMethods;
 import business.utils.Messages;
+import presentation.Login;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -133,14 +134,21 @@ public class Song implements Serializable {
     }
 
     public void displayData() {
-        System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Source : %-20s | Price : %-12.2f | Album ID : %-5s | Image : %-20s | PlayCount : %-5d | CreateAt : %-15s | UpdateAt : %-15s\n",
-                this.songId, this.singerId, this.songName, this.description, this.source, this.price, this.albumId, this.image, this.playCount, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        if (Login.user.isRole()) {
+            System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Price : %-12.2f | Album ID : %-5s | PlayCount : %-5d |\n",
+                    this.songId, this.singerId, this.songName, this.description, this.price, this.albumId, this.playCount);
+        } else {
+            System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Source : %-20s | Price : %-12.2f | Album ID : %-5s | Image : %-20s | PlayCount : %-5d | CreateAt : %-15s | UpdateAt : %-15s\n",
+                    this.songId, this.singerId, this.songName, this.description, this.source, this.price, this.albumId, this.image, this.playCount, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        }
     }
 
-    public void displayDataForUser() {
-        System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Price : %-12.2f | Album ID : %-5s | PlayCount : %-5d |\n",
-                this.songId, this.singerId, this.songName, this.description, this.price, this.albumId, this.playCount);
-    }
+//    public void displayDataForUser() {
+//        System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Price : %-12.2f | Album ID : %-5s | PlayCount : %-5d |\n",
+//                this.songId, this.singerId, this.songName, this.description, this.price, this.albumId, this.playCount);
+//    }
+
+
 
     public void inputData() {
         this.songId = findMaxId();

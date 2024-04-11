@@ -2,6 +2,7 @@ package business.entity;
 
 import business.utils.Messages;
 import business.utils.InputMethods;
+import presentation.Login;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -280,15 +281,26 @@ public class User implements Serializable {
         }
     }
 
-    //displayData()
-    public void displayDataForUser() {
-        System.out.printf("| UserName : %-20s | Email : %-25s | FullName : %-25s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
-                this.username, this.email, this.fullName, this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium", this.wallet);
+    public void displayData() {
+        if (!Login.user.isRole()) {
+            System.out.printf("| UserName : %-20s | Email : %-25s | FullName : %-25s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
+                    this.username, this.email, this.fullName, this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium", this.wallet);
+        } else {
+            System.out.printf("| ID : %-3d | UserName : %-20s | Email : %-25s | FullName : %-25s | Status : %-10s | Password : %-25s | Role : %-12s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f | CreateAt : %-15s | UpdateAt : %-15s\n",
+                    this.userId, this.username, this.email, this.fullName, this.status ? "Active" : "Inactive", this.password, this.role ? "Admin" : "User", this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium",
+                    this.wallet, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        }
     }
 
-    public void displayDataForAdmin() {
-        System.out.printf("| ID : %-3d | UserName : %-20s | Email : %-25s | FullName : %-25s | Status : %-10s | Password : %-25s | Role : %-12s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f | CreateAt : %-15s | UpdateAt : %-15s\n",
-                this.userId, this.username, this.email, this.fullName, this.status ? "Active" : "Inactive", this.password, this.role ? "Admin" : "User", this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium",
-                this.wallet, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-    }
+    //displayData()
+//    public void displayDataForUser() {
+//        System.out.printf("| UserName : %-20s | Email : %-25s | FullName : %-25s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
+//                this.username, this.email, this.fullName, this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium", this.wallet);
+//    }
+//
+//    public void displayDataForAdmin() {
+//        System.out.printf("| ID : %-3d | UserName : %-20s | Email : %-25s | FullName : %-25s | Status : %-10s | Password : %-25s | Role : %-12s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f | CreateAt : %-15s | UpdateAt : %-15s\n",
+//                this.userId, this.username, this.email, this.fullName, this.status ? "Active" : "Inactive", this.password, this.role ? "Admin" : "User", this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium",
+//                this.wallet, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+//    }
 }

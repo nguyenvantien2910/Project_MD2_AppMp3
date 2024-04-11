@@ -39,7 +39,7 @@ public class IHistoryIplm implements IGenericDesign {
         //Hiển thị danh sách bài hát cho người dùng chọn
         System.out.println("==========ALL SONG==========");
         for (int i = 0; i < songList.size(); i++) {
-            songList.get(i).displayDataForUser();
+            songList.get(i).displayData();
         }
         System.out.println("Nhập ID bài hát muốn mua : ");
         byte selectSongID = InputMethods.getByte();
