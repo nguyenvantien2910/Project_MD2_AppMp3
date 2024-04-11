@@ -1,3 +1,4 @@
+
 package business.utils;
 
 public class Messages {
@@ -13,6 +14,7 @@ public class Messages {
     public static String EXIT_SUCESS = "Đã thoát chương trình !";
     public static String USERNAME_INVALID = "Tên đăng nhập không chính xác, mời nhập lại !";
     public static String PASSWORD_INVALID = "Mật khẩu đăng nhập không chính xác, mời nhập lại !";
+    public static String PASSWORD_USED_ERROR = "Mật khẩu đã nhập trùng với mật khẩu cũ, mời nhập lại !";
     public static String BLOCK_USER_ERROR = "Tài khoản đang bị khóa, vui long liên hệ với quản trị viên (098-765-4321) !";
     public static String ID_NOT_FOUND = "ID không tồn tại, mời nhập lại !";
     public static String NAME_NOT_FOUND = "Tên không tồn tại, mời nhập lại !";

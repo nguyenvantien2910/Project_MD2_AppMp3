@@ -5,7 +5,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
-import static presentation.Login.historyList;
+import static business.designIplm.IAuthenticationIplm.userList;
+import static business.designIplm.IHistoryIplm.historyList;
 
 public class History implements Serializable {
     private int historyId;
@@ -105,10 +106,14 @@ public class History implements Serializable {
     }
 
     public int findIdMax() {
-        int maxHistoryId = historyList.stream()
-                .map(History::getHistoryId)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-        return maxHistoryId + 1;
+        if (historyList.isEmpty()) {
+            return 1;
+        } else {
+            int maxHistoryId = historyList.stream()
+                    .map(History::getHistoryId)
+                    .max(Comparator.naturalOrder())
+                    .orElse(0);
+            return maxHistoryId + 1;
+        }
     }
 }

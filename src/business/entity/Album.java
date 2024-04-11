@@ -6,12 +6,13 @@ import business.utils.Messages;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import static presentation.Login.albumList;
-import static presentation.Login.singerList;
+import static business.designIplm.IAlbumIplm.albumList;
+import static business.designIplm.IAuthenticationIplm.userList;
+import static business.designIplm.ISingerIplm.singerList;
 
 public class Album implements Serializable {
-    private int id;
-    private int singerId;
+    private Integer id;
+    private Integer singerId;
     private String name;
     private String description;
     private String image;
@@ -19,7 +20,7 @@ public class Album implements Serializable {
     public Album() {
     }
 
-    public Album(int id, int singerId, String name, String description, String image) {
+    public Album(Integer id, Integer singerId, String name, String description, String image) {
         this.id = id;
         this.singerId = singerId;
         this.name = name;
@@ -31,15 +32,15 @@ public class Album implements Serializable {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getSingerId() {
+    public Integer getSingerId() {
         return singerId;
     }
 
-    public void setSingerId(int singerId) {
+    public void setSingerId(Integer singerId) {
         this.singerId = singerId;
     }
 
@@ -81,17 +82,17 @@ public class Album implements Serializable {
     }
 
     private String inputImage() {
-        System.out.println("Nhập link ảnh cho album");
+        System.out.println("Nhập link ảnh cho album :");
         return InputMethods.getString();
     }
 
     private String inputDescription() {
-        System.out.println("Nhập mô tả cho album");
+        System.out.println("Nhập mô tả cho album :");
         return InputMethods.getString();
     }
 
     private String inputName() {
-        System.out.println("Nhập tên cho album");
+        System.out.println("Nhập tên cho album :");
         return InputMethods.getString();
     }
 
@@ -128,10 +129,14 @@ public class Album implements Serializable {
 
 
     private int findMaxId() {
-        int maxAlbumId = albumList.stream()
-                .map(Album::getId)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-        return maxAlbumId + 1;
+        if (albumList.isEmpty()) {
+            return 1;
+        } else {
+            int maxAlbumId = albumList.stream()
+                    .map(Album::getId)
+                    .max(Comparator.naturalOrder())
+                    .orElse(0);
+            return maxAlbumId + 1;
+        }
     }
 }

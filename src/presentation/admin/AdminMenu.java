@@ -5,19 +5,8 @@ import business.utils.Messages;
 import static presentation.Login.*;
 
 public class AdminMenu {
-    private static AdminMenu adminMenu = new AdminMenu();
 
-    public static AdminMenu getInstance() {
-        return adminMenu;
-    }
-
-    private AdminMenu() {
-    }
-
-    private static byte choice;
-    private static boolean isExit = false;
-
-    public void displayAdminMenu() {
+    public static void displayAdminMenu() {
         do {
             System.out.println("==========WELCOME TO ADMIN MENU==========");
             System.out.println("1. Quàn lí người dùng");
@@ -58,7 +47,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private void dashboardManagement() {
+    private static void dashboardManagement() {
         do {
             System.out.println("==========DASHBOARD MANAGEMENT==========");
             System.out.println("1. Thống kê đơn hàng theo tháng/năm/quý");
@@ -87,7 +76,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private void historyManagement() {
+    private static void historyManagement() {
         do {
             System.out.println("==========HISTORY MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách lịch sử mua theo trạng thái");
@@ -113,7 +102,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private void songManagement() {
+    private static void songManagement() {
         do {
             System.out.println("==========SONG MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách bài hát");
@@ -139,7 +128,7 @@ public class AdminMenu {
                     iSongIplm.handleDelete();
                     break;
                 case 5:
-                    iSongIplm.searchSongByName();
+                    iSongIplm.handleFindByName();
                     break;
                 case 6:
                     displayAdminMenu();
@@ -150,7 +139,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private void albumManagement() {
+    private static void albumManagement() {
         do {
             System.out.println("==========ALBUM MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách album");
@@ -176,7 +165,7 @@ public class AdminMenu {
                     iAlbumIplm.handleDelete();
                     break;
                 case 5:
-                    iAlbumIplm.searchAlbumByName();
+                    iAlbumIplm.handleFindByName();
                     break;
                 case 6:
                     displayAdminMenu();
@@ -187,7 +176,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private void singerManagement() {
+    private static void singerManagement() {
         do {
             System.out.println("==========SINGER MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách ca sĩ");
@@ -213,7 +202,7 @@ public class AdminMenu {
                     iSingerIplm.handleDelete();
                     break;
                 case 5:
-                    iSingerIplm.searchSingerByName();
+                    iSingerIplm.handleFindByName();
                     break;
                 case 6:
                     displayAdminMenu();
@@ -224,7 +213,7 @@ public class AdminMenu {
         } while (!isExit);
     }
 
-    private void userManagement() {
+    private static void userManagement() {
         do {
             System.out.println("==========USER MANAGEMENT==========");
             System.out.println("1. Hiển thị danh sách người dùng");
@@ -243,7 +232,7 @@ public class AdminMenu {
                     iUserIplm.handleAdd();
                     break;
                 case 3:
-                    iUserIplm.searchUserByName();
+                    iUserIplm.handleFindByName();
                     break;
                 case 4:
                     iUserIplm.updateUserStatus();

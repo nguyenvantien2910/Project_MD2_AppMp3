@@ -1,18 +1,41 @@
 package business.designIplm;
 
+import business.design.IGenericDesign;
 import business.entity.History;
+import business.entity.User;
 import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import presentation.Login;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import static presentation.Login.*;
+import static business.designIplm.ISongIplm.songList;
 
-public class IHistoryListIplm {
+public class IHistoryIplm implements IGenericDesign {
+    public static List<History> historyList;
 
-    public void addNewHistory() {
+    static {
+        File historyFile = new File(IOFile.HISTORY_PATH);
+        if (historyFile.length() == 0) {
+            historyList = new ArrayList<>();
+            IOFile.writeDataToFile(IOFile.HISTORY_PATH, historyList);
+        } else {
+            historyList = IOFile.getDataFormFile(IOFile.ALBUM_PATH);
+        }
+    }
+
+    @Override
+    public Integer findIndexById(Object id) {
+        return 0;
+    }
+
+    @Override
+    public void handleAdd() {
+        User user = Login.user;
         //Hiển thị danh sách bài hát cho người dùng chọn
         System.out.println("==========ALL SONG==========");
         for (int i = 0; i < songList.size(); i++) {
@@ -48,19 +71,34 @@ public class IHistoryListIplm {
             newHistory.setExpriedAt(null);
             newHistory.setTotalPrice(songList.get(selectSongIndex).getPrice() * 10);
         }
-        newHistory.setUserId(userLoginToUsed.getUserId());
+        newHistory.setUserId(user.getUserId());
 
         historyList.add(newHistory);
-
         //Logic trừ tiền người dùng
 
 
         // sau khi thêm mới lưu lại nó vào file
-        try {
-            IOFile.writeToFile(IOFile.HISTORY_PATH, historyList);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        IOFile.writeDataToFile(IOFile.HISTORY_PATH, historyList);
         System.out.println(Messages.BUY_SUCESS);
+    }
+
+    @Override
+    public void handleShow() {
+
+    }
+
+    @Override
+    public void handleEdit() {
+
+    }
+
+    @Override
+    public void handleDelete() {
+
+    }
+
+    @Override
+    public void handleFindByName() {
+
     }
 }

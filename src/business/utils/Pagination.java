@@ -3,66 +3,54 @@ package business.utils;
 import java.util.List;
 
 public class Pagination {
-    private byte choice;
-    public static <E> void paginate(List<E> list) {
-        if (list == null || list.isEmpty()) {
-            System.err.println(Messages.EMTY_LIST);
-        } else {
-            int firstIndexOfPage = 0;
-            int lastIndexOfPage = 2;
-            int elementPerPage = 10;
-            int page = 1;
-            int numberOfPage;
-            if (list.size() % elementPerPage == 0) {
-                numberOfPage = list.size() / elementPerPage;
-            } else {
-                numberOfPage = list.size() / elementPerPage + 1;
+    public static final int ELEMENT_PER_PAGE = 2;
+    public static void paginateAndDisplay(List<?> dataList, int elementPerPage) {
+        int numberOfPages = (int) Math.ceil((double) dataList.size() / elementPerPage);
+        int page = 1;
+
+        int startIndex;
+        int endIndex;
+
+        do {
+            startIndex = (page - 1) * elementPerPage;
+            endIndex = Math.min(startIndex + elementPerPage, dataList.size());
+
+            for (int i = startIndex; i < endIndex; i++) {
+                System.out.println(dataList.get(i));
+                // dataList.get(i).displayDataForUser();
             }
-            do {
-                for (int i = 0; i < list.size(); i++) {
-                    if (i >= firstIndexOfPage && i <= lastIndexOfPage) {
-                        list.get(i).displayDataForUser();
+
+            System.out.println();
+            System.out.println("Trang: " + page + "/" + numberOfPages);
+
+            if (page == 1 && page < numberOfPages) {
+                System.out.println("2. Trang sau");
+            } else if (page > 1 && page < numberOfPages) {
+                System.out.println("1. Trang trước || 2. Trang sau");
+            } else if (page > 1 && page == numberOfPages) {
+                System.out.println("1. Trang trước");
+            }
+
+            System.out.println("3. Thoát");
+            System.out.println("Mời nhập lựa chọn: ");
+
+            int choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    if (page > 1) {
+                        page--;
                     }
-                }
-
-                System.out.println();
-                System.out.println("Trang : " + page + "/" + numberOfPage);
-                if (page == 1) {
-                    System.out.println("2.Trang sau");
-                    System.out.println("3.Thoát");
-                } else if (page == numberOfPage) {
-                    System.out.println("1.Trang Trước");
-                    System.out.println("3.Thoát");
-                } else {
-                    System.out.println("1.Trang trước  ||  2.Trang sau");
-                    System.out.println("3.Thoát");
-                }
-
-                System.out.println("Mời nhập lựa chọn: ");
-                choice = InputMethods.getByte();
-                switch (choice) {
-                    case 1:
-                        if (page <= numberOfPage && page >= 0) {
-                            firstIndexOfPage -= elementPerPage;
-                            lastIndexOfPage -= elementPerPage;
-                            page -= 1;
-                            break;
-                        }
-                    case 2:
-                        if (page <= numberOfPage && page >= 0) {
-                            firstIndexOfPage += elementPerPage;
-                            lastIndexOfPage += elementPerPage;
-                            page += 1;
-                            break;
-                        }
-                    case 3:
-                        return;
-                    default:
-                        System.err.print(Messages.SELECT_INVALID);
-                        break;
-                }
-            } while (true);
-        }
+                    break;
+                case 2:
+                    if (page < numberOfPages) {
+                        page++;
+                    }
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.err.println(Messages.SELECT_INVALID);
+            }
+        } while (true);
     }
 }
-

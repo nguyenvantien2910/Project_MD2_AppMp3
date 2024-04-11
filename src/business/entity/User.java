@@ -1,7 +1,6 @@
 package business.entity;
 
 import business.utils.Messages;
-import org.mindrot.jbcrypt.BCrypt;
 import business.utils.InputMethods;
 
 import java.io.Serializable;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static presentation.Login.userList;
+import static business.designIplm.IAuthenticationIplm.userList;
 
 public class User implements Serializable {
     private int userId;
@@ -172,17 +171,7 @@ public class User implements Serializable {
         this.username = inputUserName();
         this.fullName = inputFullName();
         this.email = inputEmail();
-        do {
-            System.out.println("Nhập mật khẩu : ");
-            inputPassword();
-            System.out.println("Nhập mật khẩu xác nhận: ");
-            String inputConfirmPassword = InputMethods.getString();
-            if (BCrypt.checkpw(inputConfirmPassword, this.password)) {
-                break;
-            } else {
-                System.err.println(Messages.CONFIRM_PASSWORD_ERROR);
-            }
-        } while (true);
+        this.password = inputPassword();
         this.phone = inputPhone();
         this.avatar = inputAvatar();
         this.status = true;
@@ -191,6 +180,20 @@ public class User implements Serializable {
         this.updateAt = LocalDate.now();
         this.wallet = 100.0f;
         this.favoriteSongs = new ArrayList<>();
+    }
+
+    private String inputPassword() {
+        do {
+            System.out.println("Nhập mật khẩu : ");
+            String inputPassword = InputMethods.getString();
+            System.out.println("Nhập mật khẩu xác nhận: ");
+            String inputConfirmPassword = InputMethods.getString();
+            if (inputConfirmPassword.equals(inputPassword)) {
+                return inputPassword;
+            } else {
+                System.err.println(Messages.CONFIRM_PASSWORD_ERROR);
+            }
+        } while (true);
     }
 
     private Integer inputAccountType() {
@@ -210,17 +213,28 @@ public class User implements Serializable {
     }
 
     public String inputUserName() {
-        System.out.println("Nhập tên đăng nhập : ");
-        return InputMethods.getString();
+        while (true) {
+            System.out.println("Nhập tên đăng nhập : ");
+            String inputUserName = InputMethods.getString();
+            if (userList.stream().anyMatch(user -> user.getUsername().equals(inputUserName))) {
+                System.err.println(Messages.IS_EXITS_ERROR);
+            } else {
+                return InputMethods.getString();
+            }
+        }
     }
 
     public String inputEmail() {
         final String REGEX_EMAIL = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
-        System.out.println("Nhập email : ");
         while (true) {
+            System.out.println("Nhập email : ");
             String inputEmail = InputMethods.getString();
             if (inputEmail.matches(REGEX_EMAIL)) {
-                return InputMethods.getString();
+                if (userList.stream().noneMatch(user -> user.getEmail().equals(email))) {
+                    return InputMethods.getString();
+                } else {
+                    System.err.println(Messages.IS_EXITS_ERROR);
+                }
             } else {
                 System.err.println(Messages.EMAIL_FORMAT_ERROR);
             }
@@ -228,19 +242,15 @@ public class User implements Serializable {
     }
 
     public String inputFullName() {
-        System.out.println("Nhập họ và tên : ");
-        String inputFullName = InputMethods.getString();
         while (true) {
+            System.out.println("Nhập họ và tên : ");
+            String inputFullName = InputMethods.getString();
             if (inputFullName.isBlank()) {
                 System.err.println(Messages.EMTY_ERROR);
             } else {
                 return InputMethods.getString();
             }
         }
-    }
-
-    public void inputPassword() {
-        this.password = BCrypt.hashpw(InputMethods.getString(), BCrypt.gensalt(5));
     }
 
     public String inputPhone() {
@@ -262,11 +272,12 @@ public class User implements Serializable {
     }
 
     private int findMaxId() {
-        int maxUserId = userList.stream()
-                .map(User::getUserId)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-        return maxUserId + 1;
+        if (userList == null || userList.isEmpty()) {
+            return 1;
+        } else {
+            int max = userList.stream().map(User::getUserId).max(Comparator.naturalOrder()).orElse(0);
+            return max + 1;
+        }
     }
 
     //displayData()

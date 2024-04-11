@@ -1,25 +1,37 @@
 package business.designIplm;
 
-import business.design.IAlbumDesign;
+import business.design.IGenericDesign;
 import business.entity.Album;
 import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import business.utils.Pagination;
 
-import java.io.FileNotFoundException;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-import static presentation.Login.albumList;
-import static presentation.Login.singerList;
+import static business.designIplm.ISingerIplm.singerList;
 
-public class IAlbumIplm implements IAlbumDesign {
+public class IAlbumIplm implements IGenericDesign {
     private static byte choice;
-    private static boolean isExit;
+    private boolean isExit = false;
+    public static List<Album> albumList;
+
+    static {
+        File albumFile = new File(IOFile.ALBUM_PATH);
+        if (albumFile.length() == 0) {
+            albumList = new ArrayList<>();
+            IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
+        } else {
+            albumList = IOFile.getDataFormFile(IOFile.ALBUM_PATH);
+        }
+    }
 
     @Override
-    public Integer findIndexByName(String name) {
+    public Integer findIndexById(Object id) {
         for (int i = 0; i < albumList.size(); i++) {
-            if (albumList.get(i).getName().toLowerCase().contains(name)) {
+            if (albumList.get(i).getSingerId() == id) {
                 return i;
             }
         }
@@ -36,76 +48,18 @@ public class IAlbumIplm implements IAlbumDesign {
             System.out.printf("Nhập thông tin cho album thứ %d \n", i + 1);
             album.inputDate();
             albumList.add(album);
+            IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
+            System.out.println(Messages.ADD_NEW_SUCESS);
         }
-        // sau khi add lưu lại nó vào file
-        try {
-            IOFile.writeToFile(IOFile.ALBUM_PATH, albumList);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(Messages.ADD_NEW_SUCESS);
-
     }
 
     @Override
     public void handleShow() {
-        if (albumList.isEmpty() || albumList == null) {
+        if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("========== ALBUM LIST ==========");
-            int firstIndexOfPage = 0;
-            int lastIndexOfPage = 2;
-            int elementPerPage = 3;
-            int page = 1;
-            int numberOfPage;
-            if (albumList.size() % elementPerPage == 0) {
-                numberOfPage = albumList.size() / elementPerPage;
-            } else {
-                numberOfPage = albumList.size() / elementPerPage + 1;
-            }
-            do {
-                for (int i = 0; i < albumList.size(); i++) {
-                    if (i >= firstIndexOfPage && i <= lastIndexOfPage) {
-                        albumList.get(i).displayData();
-                    }
-                }
-
-                System.out.println("Trang : " + page + "/" + numberOfPage);
-                if (page == 1) {
-                    System.out.println("2.Trang sau");
-                    System.out.println("3.Thoát");
-                } else if (page == numberOfPage) {
-                    System.out.println("1.Trang Trước");
-                    System.out.println("3.Thoát");
-                } else {
-                    System.out.println("1.Trang trước  ||  2.Trang sau");
-                    System.out.println("3.Thoát");
-                }
-
-                System.out.println("Mời nhập lựa chọn: ");
-                choice = InputMethods.getByte();
-                switch (choice) {
-                    case 1:
-                        if (page <= numberOfPage && page >= 0) {
-                            firstIndexOfPage -= elementPerPage;
-                            lastIndexOfPage -= elementPerPage;
-                            page -= 1;
-                            break;
-                        }
-                    case 2:
-                        if (page <= numberOfPage && page >= 0) {
-                            firstIndexOfPage += elementPerPage;
-                            lastIndexOfPage += elementPerPage;
-                            page += 1;
-                            break;
-                        }
-                    case 3:
-                        return;
-                    default:
-                        System.err.print(Messages.SELECT_INVALID);
-                        break;
-                }
-            } while (true);
+            Pagination.paginateAndDisplay(albumList, Pagination.ELEMENT_PER_PAGE);
         }
     }
 
@@ -116,122 +70,105 @@ public class IAlbumIplm implements IAlbumDesign {
         } else {
             System.out.println("Nhập ID album muốn cập nhật thông tin :");
             int inputID = InputMethods.getInteger();
-            isExit = false;
-            for (int i = 0; i < albumList.size(); i++) {
-                if (albumList.get(i).getId() == inputID) {
-                    do {
-                        System.out.println("========= EDIT ALBUM INFORMATION =======");
-                        System.out.println("1. Chỉnh sửa tên");
-                        System.out.println("2. Chỉnh sửa mô tả");
-                        System.out.println("3. Chỉnh sửa danh sách ca sĩ");
-                        System.out.println("4. Chỉnh sửa link ảnh");
-                        System.out.println("5. Thoát");
-                        System.out.println("Nhập lựa chọn của bạn : ");
+            int editIndex = findIndexById(inputID);
 
-                        choice = InputMethods.getByte();
-                        switch (choice) {
-                            case 1:
-                                System.out.println("Nhập tên cho album :");
-                                String inputAlbumName = InputMethods.getString();
-                                albumList.get(i).setName(inputAlbumName);
-                                System.out.println(Messages.UPDATE_INFO_SUCESS);
-                                break;
-                            case 2:
-                                System.out.println("Nhập mô tả cho album :");
-                                String inputAlbumDescription = InputMethods.getString();
-                                albumList.get(i).setDescription(inputAlbumDescription);
-                                System.out.println(Messages.UPDATE_INFO_SUCESS);
-                                break;
-                            case 3:
-                                do {
-                                    System.out.println("Bạn có muốn nhập ca sĩ cho album không ? ");
-                                    System.out.println("1. Có ");
-                                    System.out.println("2. Không ");
-                                    System.out.println("Nhập lựa chọn của bạn : ");
+            if (editIndex != -1) {
+                do {
+                    System.out.println("========= EDIT ALBUM INFORMATION =======");
+                    System.out.println("1. Chỉnh sửa tên");
+                    System.out.println("2. Chỉnh sửa mô tả");
+                    System.out.println("3. Chỉnh sửa danh sách ca sĩ");
+                    System.out.println("4. Chỉnh sửa link ảnh");
+                    System.out.println("5. Thoát");
+                    System.out.println("Nhập lựa chọn của bạn : ");
 
-                                    byte choice = InputMethods.getByte();
-                                    switch (choice) {
-                                        case 1:
-                                            if (singerList.isEmpty() || singerList == null) {
-                                                System.err.println(Messages.EMTY_LIST);
-                                                break;
-                                            } else {
-                                                for (int j = 0; j < singerList.size(); j++) {
-                                                    if (singerList.get(j).isStatus()) {
-                                                        System.out.printf("%d. %s\n", j + 1, singerList.get(j).getSingerName());
-                                                    }
-                                                }
-                                                System.out.print("Lựa chọn của bạn: ");
-                                                choice = InputMethods.getByte();
-                                                albumList.get(i).setSingerId(singerList.get(choice - 1).getSingerId());
-                                                System.out.println(Messages.UPDATE_INFO_SUCESS);
-                                                isExit = true;
-                                                break;
+                    choice = InputMethods.getByte();
+                    switch (choice) {
+                        case 1:
+                            System.out.println("Nhập tên cho album :");
+                            String inputAlbumName = InputMethods.getString();
+                            albumList.get(editIndex).setName(inputAlbumName);
+                            System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            break;
+                        case 2:
+                            System.out.println("Nhập mô tả cho album :");
+                            String inputAlbumDescription = InputMethods.getString();
+                            albumList.get(editIndex).setDescription(inputAlbumDescription);
+                            System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            break;
+                        case 3:
+                            System.out.println("Bạn có muốn nhập ca sĩ cho album không ? ");
+                            System.out.println("1. Có ");
+                            System.out.println("2. Không ");
+                            System.out.println("Nhập lựa chọn của bạn : ");
+
+                            choice = InputMethods.getByte();
+                            switch (choice) {
+                                case 1:
+                                    if (singerList.isEmpty()) {
+                                        System.err.println(Messages.EMTY_LIST);
+                                        break;
+                                    } else {
+                                        for (int j = 0; j < singerList.size(); j++) {
+                                            if (singerList.get(j).isStatus()) {
+                                                System.out.printf("%d. %s\n", j + 1, singerList.get(j).getSingerName());
                                             }
-                                        case 2:
-                                            albumList.get(i).setSingerId(-1);
-                                            break;
-                                        default:
-                                            System.err.println(Messages.SELECT_INVALID);
-                                            break;
+                                        }
+                                        System.out.print("Lựa chọn của bạn: ");
+                                        choice = InputMethods.getByte();
+                                        albumList.get(editIndex).setSingerId(singerList.get(choice - 1).getSingerId());
+                                        System.out.println(Messages.UPDATE_INFO_SUCESS);
+                                        isExit = true;
+                                        break;
                                     }
+                                case 2:
+                                    albumList.get(editIndex).setSingerId(-1);
+                                    System.out.println(Messages.UPDATE_INFO_SUCESS);
                                     break;
-                                } while (true);
-                                break;
-                            case 4:
-                                System.out.println("Nhập link ảnh cho album : ");
-                                String inputImage = InputMethods.getString();
-                                albumList.get(i).setImage(inputImage);
-                                System.out.println(Messages.UPDATE_INFO_SUCESS);
-                                break;
-                            case 5:
-                                isExit = true;
-                                break;
-                        }
-                    } while (!isExit);
-                }
+
+                                default:
+                                    System.err.println(Messages.SELECT_INVALID);
+                                    break;
+                            }
+                            break;
+                        case 4:
+                            System.out.println("Nhập link ảnh cho album : ");
+                            albumList.get(editIndex).setImage(InputMethods.getString());
+                            System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            break;
+
+                        case 5:
+                            isExit = true;
+                            break;
+                    }
+                } while (!isExit);
             }
             // sau khi edit lưu lại nó vào file
-            try {
-                IOFile.writeToFile(IOFile.ALBUM_PATH, albumList);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
         }
     }
 
-
     @Override
     public void handleDelete() {
-        if (albumList.isEmpty() || albumList == null) {
+        if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("Nhập ID album muốn thực hiện xóa :");
             int inputID = InputMethods.getInteger();
-            boolean isExits = false;
-            for (int i = 0; i < albumList.size(); i++) {
-                if (albumList.get(i).getId() == inputID) {
-                    isExits = true;
-                    albumList.remove(i);
-                    // sau khi delete lưu lại nó vào file
-                    try {
-                        IOFile.writeToFile(IOFile.ALBUM_PATH, albumList);
-                    } catch (FileNotFoundException e) {
-                        throw new RuntimeException(e);
-                    }
-                    System.out.println(Messages.DELETE_SUCESS);
-                    break;
-                }
-            }
-            if (!isExits) {
+            int deleteIndex = findIndexById(inputID);
+            if (deleteIndex != -1) {
+                albumList.remove(deleteIndex);
+                IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
+                System.out.println(Messages.DELETE_SUCESS);
+            } else {
                 System.err.println(Messages.ID_NOT_FOUND);
             }
         }
     }
 
     @Override
-    public void searchAlbumByName() {
-        if (albumList.isEmpty() || albumList == null) {
+    public void handleFindByName() {
+        if (albumList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
         } else {
             System.out.println("Nhập tên album muốn tìm kiếm : ");
@@ -241,13 +178,9 @@ public class IAlbumIplm implements IAlbumDesign {
             if (albumListFilterBySearchKey.isEmpty()) {
                 System.err.println(Messages.NAME_NOT_FOUND);
             } else {
-                System.out.printf("Danh sách tìm kiếm theo từ khòa &s là :\n", inputSearchName);
+                System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
                 albumListFilterBySearchKey.forEach(Album::displayData);
             }
         }
-    }
-
-    public void showTrendingAlbum() {
-
     }
 }

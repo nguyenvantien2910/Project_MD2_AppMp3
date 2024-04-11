@@ -16,17 +16,7 @@ public class IOFile {
     public static final String LOGIN_USER_PATH = "src/business/data/loginUserInfo.txt";
 
     //Ghi data vào file
-    public static <T> void writeToFile(String path, List<T> list) throws FileNotFoundException {
-        File file = new File(path);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (FileNotFoundException e) {
-                throw new FileNotFoundException();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public static <T> void writeDataToFile(String path, List<T> list) {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
@@ -38,7 +28,6 @@ public class IOFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
-
             try {
                 if (fos != null) {
                     fos.close();
@@ -54,21 +43,20 @@ public class IOFile {
 
 
     //Đọc data từ file
-    public static <T> List<T> readFromFile(String path) {
-        List<T> list = new ArrayList<>();
+    public static <T> List<T> getDataFormFile(String path) {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
-
+        List<T> list = new ArrayList<>();
         try {
             fis = new FileInputStream(path);
             ois = new ObjectInputStream(fis);
             list = (List<T>) ois.readObject();
         } catch (FileNotFoundException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         } finally {
             try {
                 if (fis != null) {

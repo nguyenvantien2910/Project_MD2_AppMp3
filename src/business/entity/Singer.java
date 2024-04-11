@@ -6,7 +6,8 @@ import business.utils.Messages;
 import java.io.Serializable;
 import java.util.Comparator;
 
-import static presentation.Login.singerList;
+import static business.designIplm.IAuthenticationIplm.userList;
+import static business.designIplm.ISingerIplm.singerList;
 
 public class Singer implements Serializable {
     private Integer singerId;
@@ -74,11 +75,12 @@ public class Singer implements Serializable {
     }
 
     private int findMaxId() {
-        int maxSingerId = singerList.stream()
-                .map(Singer::getSingerId)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-        return maxSingerId + 1;
+        if (singerList.isEmpty()) {
+            return 1;
+        } else {
+            int max = singerList.stream().map(Singer::getSingerId).max(Comparator.naturalOrder()).orElse(0);
+            return max + 1;
+        }
     }
 
     private boolean inputSingerStatus() {

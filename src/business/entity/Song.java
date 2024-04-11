@@ -9,11 +9,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
-import static presentation.Login.*;
+import static business.designIplm.IAlbumIplm.albumList;
+import static business.designIplm.IAuthenticationIplm.userList;
+import static business.designIplm.ISingerIplm.singerList;
+import static business.designIplm.ISongIplm.songList;
 
 public class Song implements Serializable {
-    private int songId;
-    private int singerId;
+    private Integer songId;
+    private Integer singerId;
     private String songName;
     private String description;
     private String source;
@@ -27,7 +30,7 @@ public class Song implements Serializable {
     public Song() {
     }
 
-    public Song(int songId, int singerId, String songName, String description, String source, double price, Integer albumId, String image, LocalDate createAt, LocalDate updateAt, int playCount) {
+    public Song(Integer songId, Integer singerId, String songName, String description, String source, double price, Integer albumId, String image, LocalDate createAt, LocalDate updateAt, int playCount) {
         this.songId = songId;
         this.singerId = singerId;
         this.songName = songName;
@@ -41,11 +44,11 @@ public class Song implements Serializable {
         this.playCount = playCount;
     }
 
-    public int getSongId() {
+    public Integer getSongId() {
         return songId;
     }
 
-    public void setSongId(int songId) {
+    public void setSongId(Integer songId) {
         this.songId = songId;
     }
 
@@ -53,7 +56,7 @@ public class Song implements Serializable {
         return singerId;
     }
 
-    public void setSingerId(int singerId) {
+    public void setSingerId(Integer singerId) {
         this.singerId = singerId;
     }
 
@@ -240,7 +243,7 @@ public class Song implements Serializable {
     }
 
     private int findMaxId() {
-        if (songList == null || songList.isEmpty()) {
+        if (songList.isEmpty()) {
             return 1;
         } else {
             int maxSongId = songList.stream()

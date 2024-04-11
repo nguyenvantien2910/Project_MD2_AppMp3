@@ -1,7 +1,7 @@
 package business.design;
 
-public interface IGenericDesign {
-    Integer findIndexByName(String name);
+public interface IGenericDesign<E> {
+    Integer findIndexById(E id);
 
     void handleAdd();
 
@@ -10,4 +10,5 @@ public interface IGenericDesign {
     void handleEdit();
 
     void handleDelete();
+    void handleFindByName();
 }

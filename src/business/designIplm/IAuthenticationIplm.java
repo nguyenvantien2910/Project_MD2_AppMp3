@@ -3,101 +3,81 @@ package business.designIplm;
 import business.design.IAuthentication;
 import business.entity.User;
 import business.utils.IOFile;
-import business.utils.InputMethods;
-import business.utils.Messages;
 import org.mindrot.jbcrypt.BCrypt;
-import presentation.admin.AdminMenu;
-import presentation.user.UserMenu;
 
-import java.io.FileNotFoundException;
-import java.util.Comparator;
-
-import static presentation.Login.userList;
-import static presentation.Login.userLoginToUsed;
+import java.io.File;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class IAuthenticationIplm implements IAuthentication {
-    //Tim kiếm user theo tên
+    public static List<User> userList;
+    static {
+        File userFile = new File(IOFile.USER_PATH);
+        if (userFile.length() == 0) {
+            userList = new ArrayList<>();
+            User admin = new User();
+            admin.setUserId(1);
+            admin.setUsername("admin123");
+            admin.setPassword(BCrypt.hashpw("admin123",BCrypt.gensalt(5)));
+            admin.setEmail("nguyenvantien2910@gmail.com");
+            admin.setStatus(true);
+            admin.setFullName("Nguyen Van Tien");
+            admin.setRole(true);
+            admin.setAvatar("【IP】売上 hoặc 【IP】見積.");
+            admin.setPhone("0987654321");
+            admin.setAccountType(2);
+            admin.setCreateAt(LocalDate.now());
+            admin.setUpdateAt(LocalDate.now());
+            admin.setWallet(999999.0);
+            userList.add(admin);
+            IOFile.writeDataToFile(IOFile.USER_PATH, userList);
+        } else {
+            userList = IOFile.getDataFormFile(IOFile.USER_PATH);
+            if (userList.stream().noneMatch(user -> user.getUsername().equals("Admin"))){
+                User admin = new User();
+                admin.setUserId(1);
+                admin.setUsername("admin123");
+                admin.setPassword(BCrypt.hashpw("admin123",BCrypt.gensalt(5)));
+                admin.setEmail("nguyenvantien2910@gmail.com");
+                admin.setStatus(true);
+                admin.setFullName("Nguyen Van Tien");
+                admin.setRole(true);
+                admin.setAvatar("【IP】売上 hoặc 【IP】見積.");
+                admin.setPhone("0987654321");
+                admin.setAccountType(2);
+                admin.setCreateAt(LocalDate.now());
+                admin.setUpdateAt(LocalDate.now());
+                admin.setWallet(999999.0);
+                userList.add(admin);
+                IOFile.writeDataToFile(IOFile.USER_PATH, userList);
+            }
+        }
+    }
+
+
     private User getUserFromUsername(String username) {
         return userList.stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
     }
 
-    //Id tự tăng
-    private int getNewId() {
-        int maxUserId = userList.stream()
-                .map(User::getUserId)
-                .max(Comparator.naturalOrder())
-                .orElse(0);
-        return maxUserId + 1;
-    }
 
     @Override
-    public void login() {
-        System.out.println("=========== LOGIN ===========");
-        //Nhập tên đăng nhập
-        System.out.println("Nhập tên đăng nhập :");
-        String inputUserName = InputMethods.getString();
-        //Khởi tại tài khoản đang đăng nhập theo username đã nhập
-        User userLogin = getUserFromUsername(inputUserName);
-        //Kiểm tra tài khoản đang đăng nhập có tồn tại hay không ?
+    public User login(String username, String password) {
+        User userLogin = getUserFromUsername(username);
         if (userLogin == null) {
-            System.err.println(Messages.USERNAME_INVALID);
-            System.out.println("========= LOGIN FAILED ===========");
-            System.out.println("1. Tiếp tục đăng nhập với tài khoản khác");
-            System.out.println("2. Chưa có tài khoản, đăng kí ngay ");
-            System.out.println("3. Quay lại ");
-
-            System.out.print("Nhâp lựa chọn của bạn : \n");
-
-            byte choice = InputMethods.getByte();
-            switch (choice) {
-                case 1:
-                    login();
-                    break;
-                case 2:
-                    register();
-                    break;
-                case 3:
-                    return;
-                default:
-                    System.err.println(Messages.SELECT_INVALID);
-            }
-        } else {
-            //Nhập mật khẩu
-            System.out.println("Nhập mật khẩu : ");
-            String inputPassword = InputMethods.getString();
-            //Kiểm tra tính hợp lệ của mật khẩu
-            boolean checkLogin = BCrypt.checkpw(inputPassword, userLogin.getPassword());
-            //Kiểm tra role của user đăng nhập
-            if (checkLogin) {
-                userLoginToUsed = userLogin;
-                if (userLogin.isRole()) {
-                    AdminMenu.getInstance().displayAdminMenu();
-                } else {
-                    if (!userLogin.isStatus()) {
-                        System.err.println(Messages.BLOCK_USER_ERROR);
-                    } else {
-                        UserMenu.getInstance().displayUserMenu();
-                    }
-                }
-            } else {
-                System.err.println(Messages.PASSWORD_INVALID);
-            }
+            return null;
         }
+        boolean checkLogin = BCrypt.checkpw(password, userLogin.getPassword());
+        if (checkLogin) {
+            return userLogin;
+        }
+        return null;
     }
 
     @Override
-    public void register() {
-        System.out.println("=========== REGISTER ===========");
-        User user = new User();
-        user.inputData();
-        user.setUserId(getNewId());
+    public void register(User user) {
+        user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(5)));
         userList.add(user);
-        try {
-            IOFile.writeToFile(IOFile.USER_PATH, userList);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        System.out.println(Messages.ADD_NEW_SUCESS);
-        login();
+        IOFile.writeDataToFile(IOFile.USER_PATH, userList);
     }
 }

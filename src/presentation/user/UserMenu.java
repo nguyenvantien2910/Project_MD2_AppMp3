@@ -1,30 +1,16 @@
 package presentation.user;
 
-import business.designIplm.IUserIplm;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
 import static presentation.Login.*;
 
 public class UserMenu {
-    private static UserMenu userMenu = new UserMenu();
-
-    public static UserMenu getInstance() {
-        return userMenu;
-    }
-
-    private UserMenu() {
-
-    }
-
-    private static byte choice;
-    private static boolean isExit = false;
-
-    public void displayUserMenu() {
+    public static void displayUserMenu() {
         do {
             System.out.println("==========WELCOME TO USER MENU==========");
             System.out.println("1. Trang chủ");
-            System.out.println("2. Trang tìm kiếm bài hát");
+            System.out.println("2. Trang tìm kiếm bài hát/Ca sĩ / Album");
             System.out.println("3. Trang bài hát yêu thích");
             System.out.println("4. Trang thông tin cá nhân");
             System.out.println("5. Lịch sử mua hàng");
@@ -57,7 +43,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private void displayHistorypage() {
+    private static void displayHistorypage() {
         do {
             System.out.println("==========HISTORY MENU==========");
             System.out.println("1. Hiển thị dữ liệu");
@@ -67,10 +53,9 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
-                    IUserIplm.displayBuyHistory();
                     break;
                 case 2:
-                    isExit = true;
+                    displayUserMenu();
                     return;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
@@ -78,7 +63,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private void displayInfoPage() {
+    private static void displayInfoPage() {
         do {
             System.out.println("==========INFOMATION MENU==========");
             System.out.println("1. Hiển thị thông tin cá nhân");
@@ -90,16 +75,15 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
-                    IUserIplm.showInfoUserLogin();
                     break;
                 case 2:
-                    IUserIplm.updateInfomation();
+                    iUserIplm.updateInfomation();
                     break;
                 case 3:
-                    IUserIplm.updatePassword();
+                    iUserIplm.updatePassword();
                     break;
                 case 4:
-                    isExit = true;
+                    displayUserMenu();
                     return;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
@@ -107,7 +91,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private void displayFavoritesList() {
+    private static void displayFavoritesList() {
         do {
             System.out.println("==========FAVORITES LIST MENU==========");
             System.out.println("1. Danh sách bài hát yêu thích");
@@ -117,10 +101,9 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
-                    iUserIplm.showAllBookMarkSong();
                     break;
                 case 2:
-                    isExit = true;
+                    displayUserMenu();
                     return;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
@@ -128,7 +111,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private void displaySearchMenu() {
+    private static void displaySearchMenu() {
         do {
             System.out.println("==========SEARCH MENU==========");
             System.out.println("1. Tìm kiếm ca sĩ");
@@ -142,22 +125,21 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
-                    iUserIplm.searchSingerByName();
+                    iSingerIplm.handleFindByName();
                     break;
                 case 2:
-                    iAlbumIplm.searchAlbumByName();
+                    iAlbumIplm.handleFindByName();
                     break;
                 case 3:
-                    iUserIplm.searchSongByName();
+                    iSongIplm.handleFindByName();
                     break;
                 case 4:
-                    iHistoryIplm.addNewHistory();
+                    iHistoryIplm.handleAdd();
                     break;
                 case 5:
-                    iSongIplm.bookmarkSongToFavoriteList();
                     break;
                 case 6:
-                    isExit = true;
+                    displayUserMenu();
                     return;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
@@ -165,7 +147,7 @@ public class UserMenu {
         } while (!isExit);
     }
 
-    private void displayHomePageMenu() {
+    private static void displayHomePageMenu() {
         do {
             System.out.println("==========HOME PAGE==========");
             System.out.println("1. Hiển thị bài hát");
@@ -184,13 +166,11 @@ public class UserMenu {
                     iSongIplm.showTrendingSong();
                     break;
                 case 3:
-                    iSingerIplm.showTrendingSinger();
                     break;
                 case 4:
-                    iAlbumIplm.showTrendingAlbum();
                     break;
                 case 5:
-                    isExit = true;
+                    displayUserMenu();
                     return;
                 default:
                     System.err.println(Messages.SELECT_INVALID);

@@ -1,100 +1,51 @@
 package presentation;
 
 import business.designIplm.*;
-import business.entity.*;
+import business.entity.User;
 import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import presentation.admin.AdminMenu;
+import presentation.user.UserMenu;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Login {
-    //Khai báo biến dùng chung
-    public static List<User> userList;
-    public static List<Song> songList;
-    public static List<Singer> singerList;
-    public static List<Album> albumList;
-    public static List<History> historyList;
-    public static User userLoginToUsed;
+    private static IAuthenticationIplm iAuthenticationIplm = new IAuthenticationIplm();
+    public static User user = null;
+    public static byte choice;
+    public static boolean isExit = false;
 
-    public static ISongIplm iSongIplm = new ISongIplm();
-    public static ISingerIplm iSingerIplm = new ISingerIplm();
     public static IUserIplm iUserIplm = new IUserIplm();
+    public static ISingerIplm iSingerIplm = new ISingerIplm();
+    public static ISongIplm iSongIplm = new ISongIplm();
     public static IAlbumIplm iAlbumIplm = new IAlbumIplm();
-    public static IHistoryListIplm iHistoryIplm = new IHistoryListIplm();
+    public static IHistoryIplm iHistoryIplm = new IHistoryIplm();
 
+    //auto login
     static {
-        File userFile = new File(IOFile.USER_PATH);
-        File songFile = new File(IOFile.SONG_PATH);
-        File singerFile = new File(IOFile.SINGER_PATH);
-        File historyFile = new File(IOFile.HISTORY_PATH);
-        File albumFile = new File(IOFile.ALBUM_PATH);
-        File loginUserFile = new File(IOFile.LOGIN_USER_PATH);
-
-        if (userFile.length() == 0) {
-            userList = new ArrayList<>();
-            try {
-                IOFile.writeToFile(IOFile.USER_PATH, userList);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            userList = IOFile.readFromFile(IOFile.USER_PATH);
+        File loginStatus = new File(IOFile.LOGIN_USER_PATH);
+        // nếu có một đối tượng user đã đăng nhập từ trước thì gắn user đó vào biến user
+        if (loginStatus.length() != 0) {
+            user = IOFile.getUserLogin();
         }
-
-        if (songFile.length() == 0) {
-            songList = new ArrayList<>();
-            try {
-                IOFile.writeToFile(IOFile.SONG_PATH, songList);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
+        // tự động đăng nhập nếu user khác null
+        if (user != null) {
+            {
+                if (user.isRole()) {
+                    AdminMenu.displayAdminMenu();
+                } else {
+                    UserMenu.displayUserMenu();
+                }
             }
-        } else {
-            songList = IOFile.readFromFile(IOFile.SONG_PATH);
         }
-
-        if (singerFile.length() == 0) {
-            singerList = new ArrayList<>();
-            try {
-                IOFile.writeToFile(IOFile.SINGER_PATH, singerList);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            singerList = IOFile.readFromFile(IOFile.SINGER_PATH);
-        }
-
-        if (albumFile.length() == 0) {
-            albumList = new ArrayList<>();
-            try {
-                IOFile.writeToFile(IOFile.ALBUM_PATH, albumList);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            albumList = IOFile.readFromFile(IOFile.ALBUM_PATH);
-        }
-
-        if (historyFile.length() == 0) {
-            historyList = new ArrayList<>();
-            try {
-                IOFile.writeToFile(IOFile.HISTORY_PATH, historyList);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            historyList = IOFile.readFromFile(IOFile.HISTORY_PATH);
-        }
-
     }
 
     public static void main(String[] args) {
-        IAuthenticationIplm iAuthenticationIplm = new IAuthenticationIplm();
+
         do {
-            System.out.println("===============WELCOME TO SPOTIFY =============");
+            System.out.println("===============WELCOME TO SPOTIFY 偽物=============");
+            System.out.println("=================MADE BY ティエンさん===============");
             System.out.println("1. Đăng nhập");
             System.out.println("2. Đăng kí");
             System.out.println("3. Thoát chương trình");
@@ -105,10 +56,10 @@ public class Login {
 
             switch (choice) {
                 case 1:
-                    iAuthenticationIplm.login();
+                    login();
                     break;
                 case 2:
-                    iAuthenticationIplm.register();
+                    register();
                     break;
                 case 3:
                     System.out.println(Messages.EXIT_SUCESS);
@@ -117,5 +68,65 @@ public class Login {
                     System.err.println(Messages.SELECT_INVALID);
             }
         } while (true);
+    }
+
+    private static void register() {
+        System.out.println("=========== REGISTER ===========");
+        User user = new User();
+        user.inputData();
+        iAuthenticationIplm.register(user);
+        System.out.println(Messages.ADD_NEW_SUCESS);
+        login();
+    }
+
+    private static void login() {
+        System.out.println("=========== LOGIN ===========");
+        //Nhập tên đăng nhập
+        System.out.println("Nhập tên đăng nhập :");
+        String inputUserName = InputMethods.getString();
+        //Nhập mật khẩu
+        System.out.println("Nhập mật khẩu :");
+        String inputPassword = InputMethods.getString();
+        // kiểm tra tài khoản nhập vào
+        User userLogin = iAuthenticationIplm.login(inputUserName, inputPassword);
+        if (userLogin == null) {
+            System.err.println(Messages.USERNAME_INVALID);
+            System.out.println("========= LOGIN FAILED ===========");
+            System.out.println("1. Tiếp tục đăng nhập với tài khoản khác");
+            System.out.println("2. Chưa có tài khoản, đăng kí ngay ");
+            System.out.println("3. Quay lại ");
+
+            System.out.print("Nhâp lựa chọn của bạn : \n");
+
+            byte choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    login();
+                    break;
+                case 2:
+                    register();
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.err.println(Messages.SELECT_INVALID);
+            }
+        } else {
+            //Cập nhập thông tin user đang login
+            IOFile.updateUserLogin(userLogin);
+            //check quyền có phải admin hay không ?
+            if (userLogin.isRole()) {
+                user = userLogin;
+                AdminMenu.displayAdminMenu();
+            } else {
+                //Nếu là user thường thì sẽ cần check xem có phải là user đang bị block hay không ?
+                if (!userLogin.isStatus()) {
+                    System.out.println(Messages.BLOCK_USER_ERROR);
+                } else {
+                    user = userLogin;
+                    UserMenu.displayUserMenu();
+                }
+            }
+        }
     }
 }
