@@ -76,6 +76,7 @@ public class Login {
         user.inputData();
         iAuthenticationIplm.register(user);
         System.out.println(Messages.ADD_NEW_SUCESS);
+        System.out.println();
         login();
     }
 
@@ -90,7 +91,7 @@ public class Login {
         // kiểm tra tài khoản nhập vào
         User userLogin = iAuthenticationIplm.login(inputUserName, inputPassword);
         if (userLogin == null) {
-            System.err.println(Messages.USERNAME_INVALID);
+            System.err.println(Messages.LOGIN_FAIL);
             System.out.println("========= LOGIN FAILED ===========");
             System.out.println("1. Tiếp tục đăng nhập với tài khoản khác");
             System.out.println("2. Chưa có tài khoản, đăng kí ngay ");

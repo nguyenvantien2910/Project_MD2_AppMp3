@@ -1,5 +1,6 @@
 package business.entity;
 
+import business.designIplm.DisplayData;
 import business.utils.InputMethods;
 import business.utils.Messages;
 import presentation.Login;
@@ -11,11 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
 import static business.designIplm.IAlbumIplm.albumList;
-import static business.designIplm.IAuthenticationIplm.userList;
 import static business.designIplm.ISingerIplm.singerList;
 import static business.designIplm.ISongIplm.songList;
 
-public class Song implements Serializable {
+public class Song implements Serializable, DisplayData {
     private Integer songId;
     private Integer singerId;
     private String songName;
@@ -134,7 +134,7 @@ public class Song implements Serializable {
     }
 
     public void displayData() {
-        if (Login.user.isRole()) {
+        if (!Login.user.isRole()) {
             System.out.printf("| Song ID : %-5d |Singer ID : %-5d | Song Name : %-20s | Description : %-25s | Price : %-12.2f | Album ID : %-5s | PlayCount : %-5d |\n",
                     this.songId, this.singerId, this.songName, this.description, this.price, this.albumId, this.playCount);
         } else {

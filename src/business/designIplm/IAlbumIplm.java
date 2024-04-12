@@ -14,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static business.designIplm.ISingerIplm.singerList;
+import static business.designIplm.ISongIplm.songList;
 
-public class IAlbumIplm implements IGenericDesign {
+public class IAlbumIplm implements IGenericDesign,DisplayData {
     private static byte choice;
     private boolean isExit = false;
     public static List<Album> albumList;
@@ -29,6 +30,8 @@ public class IAlbumIplm implements IGenericDesign {
             albumList = IOFile.getDataFormFile(IOFile.ALBUM_PATH);
         }
     }
+
+    ///////////////////////// ADMIN /////////////////////
 
     public void askAdminToAddNewAlbum() {
         if (Login.user.isRole()){
@@ -180,13 +183,19 @@ public class IAlbumIplm implements IGenericDesign {
         } else {
             System.out.println("Nhập ID album muốn thực hiện xóa :");
             int inputID = InputMethods.getInteger();
-            int deleteIndex = findIndexById(inputID);
-            if (deleteIndex != -1) {
-                albumList.remove(deleteIndex);
-                IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
-                System.out.println(Messages.DELETE_SUCESS);
-            } else {
-                System.err.println(Messages.ID_NOT_FOUND);
+            for (int i = 0; i < songList.size(); i++) {
+                if (songList.get(i).getAlbumId() == inputID) {
+                    System.err.println(Messages.HAS_SONG_ERROR);
+                } else {
+                    int deleteIndex = findIndexById(inputID);
+                    if (deleteIndex != -1) {
+                        albumList.remove(deleteIndex);
+                        IOFile.writeDataToFile(IOFile.ALBUM_PATH, albumList);
+                        System.out.println(Messages.DELETE_SUCESS);
+                    } else {
+                        System.err.println(Messages.ID_NOT_FOUND);
+                    }
+                }
             }
         }
     }
@@ -209,5 +218,10 @@ public class IAlbumIplm implements IGenericDesign {
                 System.out.println();
             }
         }
+    }
+
+    @Override
+    public void displayData() {
+
     }
 }

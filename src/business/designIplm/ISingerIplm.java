@@ -27,6 +27,9 @@ public class ISingerIplm implements IGenericDesign {
             singerList = IOFile.getDataFormFile(IOFile.SINGER_PATH);
         }
     }
+
+    //////////////////////// ADMIN /////////////////////
+
     private void askAdminToAddNewSinger() {
         if (Login.user.isRole()){
             System.out.println("Bạn có muốn thêm mới ca sĩ không ?");
@@ -67,6 +70,8 @@ public class ISingerIplm implements IGenericDesign {
             System.out.printf("Nhập thông tin cho ca sĩ thứ %d \n", i + 1);
             singer.inputData();
             singerList.add(singer);
+            System.out.println(Messages.ADD_NEW_SUCESS);
+            System.out.println();
         }
         // sau khi add lưu lại nó vào file
         IOFile.writeDataToFile(IOFile.SINGER_PATH, singerList);
@@ -105,6 +110,8 @@ public class ISingerIplm implements IGenericDesign {
                     choice = InputMethods.getByte();
                     switch (choice) {
                         case 1:
+                            System.out.printf("Tên cũ của ca sĩ : %s\n",singerList.get(editIndex).getSingerName());
+                            System.out.println();
                             System.out.println("Nhập tên mới cho ca sĩ :");
                             String inputSingerName = InputMethods.getString();
                             singerList.get(editIndex).setSingerName(inputSingerName);
@@ -112,6 +119,8 @@ public class ISingerIplm implements IGenericDesign {
                             break;
 
                         case 2:
+                            System.out.printf("Mô tả cũ của ca sĩ : %s\n",singerList.get(editIndex).getDescription());
+                            System.out.println();
                             System.out.println("Nhập mô tả cho ca sĩ :");
                             String inputSingerDescription = InputMethods.getString();
                             singerList.get(editIndex).setDescription(inputSingerDescription);
@@ -119,6 +128,8 @@ public class ISingerIplm implements IGenericDesign {
                             break;
 
                         case 3:
+                            System.out.printf("Trạng thái cũ của ca sĩ : %s\n",(singerList.get(editIndex).isStatus()) ? "Đang hoạt động" : "Ngừng hoạt động" );
+                            System.out.println();
                             singerList.get(editIndex).setStatus(!singerList.get(editIndex).isStatus());
                             System.out.println(Messages.UPDATE_STATUS_SUCESS);
                             break;

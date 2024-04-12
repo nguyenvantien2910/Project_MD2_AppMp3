@@ -12,17 +12,18 @@ public class Messages {
     public static String BUY_SUCESS = "Mua bài hát thành công !";
     public static String BOOKMARK_SUCESS = "Thêm bài hát yêu thích thành công !";
     public static String EXIT_SUCESS = "Đã thoát chương trình !";
-    public static String USERNAME_INVALID = "Tên đăng nhập không chính xác, mời nhập lại !";
-    public static String PASSWORD_INVALID = "Mật khẩu đăng nhập không chính xác, mời nhập lại !";
+    public static String LOGIN_FAIL = "Tên đăng nhập hoặc mật khẩu không chính xác, mời nhập lại !";
     public static String PASSWORD_USED_ERROR = "Mật khẩu đã nhập trùng với mật khẩu cũ, mời nhập lại !";
     public static String BLOCK_USER_ERROR = "Tài khoản đang bị khóa, vui long liên hệ với quản trị viên (098-765-4321) !";
     public static String ID_NOT_FOUND = "ID không tồn tại, mời nhập lại !";
     public static String NAME_NOT_FOUND = "Tên không tồn tại, mời nhập lại !";
-    public static String LENGTH_ERROR = "Độ dài không hợp lệ !";
+    public static String WALLET_NOT_ENOUGH = "Số tiền còn lại không đủ !";
+    public static String WALLET_CHARGE_SUCESS = "Nạp tiền thành công !";
     public static String EMTY_ERROR = "Không được để trống, mời nhập lại ! !";
     public static String FLOAT_ERROR = "Giá trị nhập phải lớn hơn 0 !";
     public static String IS_EXITS_ERROR = "Đã tồn tại, mời nhập lại !";
     public static String CONFIRM_PASSWORD_ERROR = "Mật khẩu không khớp, mời nhập lại !";
     public static String EMAIL_FORMAT_ERROR = "Email không đúng định dạng, mời nhập lại !";
     public static String PHONE_FORMAT_ERROR = "Định dạng số điện thoại không hợp lê, mời nhập lại !";
+    public static String HAS_SONG_ERROR = "Album đang có bài hát, không thể xóa !";
 }

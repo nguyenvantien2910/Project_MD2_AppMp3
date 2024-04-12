@@ -1,5 +1,6 @@
 package business.entity;
 
+import business.designIplm.DisplayData;
 import business.utils.Messages;
 import business.utils.InputMethods;
 import presentation.Login;
@@ -7,13 +8,11 @@ import presentation.Login;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import static business.designIplm.IAuthenticationIplm.userList;
 
-public class User implements Serializable {
+public class User implements Serializable, DisplayData {
     private int userId;
     private String username;
     private String email;
@@ -28,6 +27,7 @@ public class User implements Serializable {
     private LocalDate updateAt;
     private double wallet;
     private List<Song> favoriteSongs;
+    private Map<Integer,Integer> playlist;
 
     public User() {
         this.status = true;
@@ -35,6 +35,7 @@ public class User implements Serializable {
         this.updateAt = LocalDate.now();
         this.wallet = 0;
         this.favoriteSongs = new ArrayList<>();
+        this.playlist = new HashMap<>();
     }
 
     public User(int userId, String username, String email, String fullName, boolean status, String password, boolean role, String avatar, String phone, Integer accountType, LocalDate createAt, LocalDate updateAt, double wallet) {
@@ -52,6 +53,7 @@ public class User implements Serializable {
         this.updateAt = updateAt;
         this.wallet = wallet;
         this.favoriteSongs = new ArrayList<>();
+        this.playlist = new HashMap<>();
     }
 
     public int getUserId() {
@@ -281,9 +283,10 @@ public class User implements Serializable {
         }
     }
 
+    @Override
     public void displayData() {
         if (!Login.user.isRole()) {
-            System.out.printf("| UserName : %-20s | Email : %-25s | FullName : %-25s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
+            System.out.printf("| UserName : %-20s | Email : %-20s | FullName : %-20s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
                     this.username, this.email, this.fullName, this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium", this.wallet);
         } else {
             System.out.printf("| ID : %-3d | UserName : %-20s | Email : %-25s | FullName : %-25s | Status : %-10s | Password : %-25s | Role : %-12s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f | CreateAt : %-15s | UpdateAt : %-15s\n",
@@ -291,16 +294,4 @@ public class User implements Serializable {
                     this.wallet, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         }
     }
-
-    //displayData()
-//    public void displayDataForUser() {
-//        System.out.printf("| UserName : %-20s | Email : %-25s | FullName : %-25s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f\n",
-//                this.username, this.email, this.fullName, this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium", this.wallet);
-//    }
-//
-//    public void displayDataForAdmin() {
-//        System.out.printf("| ID : %-3d | UserName : %-20s | Email : %-25s | FullName : %-25s | Status : %-10s | Password : %-25s | Role : %-12s | Avatar : %-30s | Phone : %-9s | AccountType : %-15s | Wallet : %-12.2f | CreateAt : %-15s | UpdateAt : %-15s\n",
-//                this.userId, this.username, this.email, this.fullName, this.status ? "Active" : "Inactive", this.password, this.role ? "Admin" : "User", this.avatar, this.phone, (this.accountType == 1) ? "Tài khoản thường" : "Premium",
-//                this.wallet, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.updateAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-//    }
 }

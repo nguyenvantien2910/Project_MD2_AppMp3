@@ -3,6 +3,7 @@ package presentation.user;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
+import static business.utils.CSS.*;
 import static presentation.Login.*;
 
 public class UserMenu {
@@ -53,6 +54,7 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iHistoryIplm.displayHistoryForUser();
                     break;
                 case 2:
                     displayUserMenu();
@@ -65,17 +67,21 @@ public class UserMenu {
 
     private static void displayInfoPage() {
         do {
-            System.out.println("==========INFOMATION MENU==========");
-            System.out.println("1. Hiển thị thông tin cá nhân");
-            System.out.println("2. Chỉnh sửa thông tin cá nhân");
-            System.out.println("3. Đổi mật khẩu");
-            System.out.println("4. Thoát");
-            System.out.println(" Nhập lựa chọn của bạn : ");
+            System.out.println(ANSI_CYAN + "╔══════════════════════════════════╗");
+            System.out.println("║          INFORMATION MENU        ║");
+            System.out.println("╠══════════════════════════════════╣");
+            System.out.println("║ " + ANSI_YELLOW + "1. Hiển thị thông tin cá nhân" + ANSI_CYAN + "    ║");
+            System.out.println("║ " + ANSI_YELLOW + "2. Chỉnh sửa thông tin cá nhân" + ANSI_CYAN + "   ║");
+            System.out.println("║ " + ANSI_YELLOW + "3. Đổi mật khẩu" + ANSI_CYAN + "                  ║");
+            System.out.println("║ " + ANSI_YELLOW + "4. Thoát" + ANSI_CYAN + "                         ║");
+            System.out.println("╚══════════════════════════════════╝");
+            System.out.print(ANSI_RESET + "Nhập lựa chọn của bạn: ");
 
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
                     iUserIplm.displayInformation();
+                    displayInfoPage();
                     break;
                 case 2:
                     iUserIplm.updateInfomation();
@@ -117,7 +123,7 @@ public class UserMenu {
             System.out.println("==========SEARCH MENU==========");
             System.out.println("1. Tìm kiếm ca sĩ");
             System.out.println("2. Tìm kiếm album");
-            System.out.println("3. Tìm kiếm danh sách bài hát");
+            System.out.println("3. Tìm kiếm bài hát");
             System.out.println("4. Mua bài hát");
             System.out.println("5. Thêm vào yêu thích");
             System.out.println("6. Thoát");
@@ -127,12 +133,15 @@ public class UserMenu {
             switch (choice) {
                 case 1:
                     iSingerIplm.handleFindByName();
+                    displaySearchMenu();
                     break;
                 case 2:
                     iAlbumIplm.handleFindByName();
+                    displaySearchMenu();
                     break;
                 case 3:
                     iSongIplm.handleFindByName();
+                    displaySearchMenu();
                     break;
                 case 4:
                     iHistoryIplm.handleAdd();
@@ -165,6 +174,7 @@ public class UserMenu {
                     break;
                 case 2:
                     iSongIplm.showTrendingSong();
+                    displayHomePageMenu();
                     break;
                 case 3:
                     break;

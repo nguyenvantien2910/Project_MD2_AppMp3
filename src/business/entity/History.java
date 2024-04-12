@@ -1,5 +1,7 @@
 package business.entity;
 
+import business.designIplm.DisplayData;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -7,8 +9,9 @@ import java.util.Comparator;
 
 import static business.designIplm.IAuthenticationIplm.userList;
 import static business.designIplm.IHistoryIplm.historyList;
+import static business.designIplm.ISingerIplm.singerList;
 
-public class History implements Serializable {
+public class History implements Serializable, DisplayData {
     private int historyId;
     private int songId;
     private int userId;
@@ -98,7 +101,8 @@ public class History implements Serializable {
 
     public void displayData() {
         System.out.printf("|History ID: %-5d | Song ID : %-5d | UserId : %-5d | OrderAt : %-10s | TotalPrice : %-12.2f | TypePackage : %-15s | CreateAt : %-12s | ExpriedAt : %-12s\n",
-                this.historyId, this.songId, this.userId, this.orderAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.totalPrice, this.typePackage, this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.expriedAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                this.historyId, this.songId, this.userId, this.orderAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), this.totalPrice, (this.typePackage == 1) ? "Gói 30 ngày" : "Vĩnh Viễn", this.createAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                (this.expriedAt == null) ? "Unlimited" : this.expriedAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
     }
 
     public void inputData() {
@@ -109,11 +113,8 @@ public class History implements Serializable {
         if (historyList.isEmpty()) {
             return 1;
         } else {
-            int maxHistoryId = historyList.stream()
-                    .map(History::getHistoryId)
-                    .max(Comparator.naturalOrder())
-                    .orElse(0);
-            return maxHistoryId + 1;
+            int max = historyList.stream().map(History::getHistoryId).max(Comparator.naturalOrder()).orElse(0);
+            return max + 1;
         }
     }
 }

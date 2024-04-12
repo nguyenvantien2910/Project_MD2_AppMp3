@@ -1,10 +1,12 @@
 package business.utils;
 
+import business.designIplm.DisplayData;
+
 import java.util.List;
 
 public class Pagination {
-    public static final int ELEMENT_PER_PAGE = 2;
-    public static void paginateAndDisplay(List<?> dataList, int elementPerPage) {
+    public static final int ELEMENT_PER_PAGE = 10;
+    public static <E extends DisplayData> void paginateAndDisplay(List<E> dataList, int elementPerPage) {
         int numberOfPages = (int) Math.ceil((double) dataList.size() / elementPerPage);
         int page = 1;
 
@@ -16,8 +18,7 @@ public class Pagination {
             endIndex = Math.min(startIndex + elementPerPage, dataList.size());
 
             for (int i = startIndex; i < endIndex; i++) {
-                System.out.println(dataList.get(i));
-                //dataList.get(i);
+                dataList.get(i).displayData();
             }
 
             System.out.println();

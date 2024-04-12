@@ -33,54 +33,165 @@ public class ISongIplm implements IGenericDesign {
         }
     }
 
-    public void showTrendingSong() {
-        if (songList == null || songList.isEmpty()) {
+
+    ///////////////////////// ADMIN ////////////////////////////
+    @Override
+    public void handleFindByName() {
+        if (songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
-            UserMenu.displayHomePageMenu();
+            askAdminToAddSong();
         } else {
-            //Tìm top 10 bài hát có lượt nghe nhiều nhất
-            List<Song> top10TrendingSongByPlayCount = songList.stream().sorted(Comparator.comparing(Song::getPlayCount).reversed()).limit(10).toList();
-            System.out.println("==========TRENDING SONG==========");
-            top10TrendingSongByPlayCount.forEach(Song::displayData);
+            System.out.println("Nhập tên bài hát muốn tìm kiếm : ");
+            String inputSearchName = InputMethods.getString();
+
+            List<Song> songListFilterBySearchKey = songList.stream().filter(song -> song.getSongName().toLowerCase().contains(inputSearchName.toLowerCase())).toList();
+            if (songListFilterBySearchKey.isEmpty()) {
+                System.err.println(Messages.NAME_NOT_FOUND);
+            } else {
+                System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
+                songListFilterBySearchKey.forEach(Song::displayData);
+                System.out.println();
+            }
         }
     }
 
-    public void showAllSongForUser() {
-        if (songList == null || songList.isEmpty()) {
+
+    @Override
+    public void handleDelete() {
+        if (songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
-            UserMenu.displayHomePageMenu();
+            askAdminToAddSong();
         } else {
-            System.out.println("==========ALL SONG==========");
-            Pagination.paginateAndDisplay(songList, Pagination.ELEMENT_PER_PAGE);
+            System.out.println("Nhập ID bài hát muốn thực hiện xóa :");
+            int inputID = InputMethods.getInteger();
+            int deleteIndex = findIndexById(inputID);
+            if (deleteIndex == -1) {
+                System.err.println(Messages.ID_NOT_FOUND);
+            } else {
+                songList.remove(deleteIndex);
+                IOFile.writeDataToFile(IOFile.SONG_PATH, songList);
+            }
         }
     }
 
-    public void bookmarkSongToFavoriteList() {
-        //Hiển thị danh sách bài hát cho người dùng chọn
-        System.out.println("==========ALL SONG==========");
-        for (int i = 0; i < songList.size(); i++) {
-            songList.get(i).displayData();
+
+    @Override
+    public void handleEdit() {
+        if (songList.isEmpty()) {
+            System.err.println(Messages.EMTY_LIST);
+            askAdminToAddSong();
+        } else {
+            System.out.println("Nhập ID bài hát muốn cập nhật thông tin :");
+            int inputID = InputMethods.getInteger();
+            int editSongIndex = findIndexById(inputID);
+            if (editSongIndex != -1) {
+                do {
+                    System.out.println("========= EDIT SONG INFORMATION =======");
+                    System.out.println("1. Chỉnh sửa tên");
+                    System.out.println("2. Chỉnh sửa ID ca sĩ");
+                    System.out.println("3. Chỉnh sửa mô tả bài hát");
+                    System.out.println("4. Chỉnh sửa source bài hát");
+                    System.out.println("5. Chỉnh sửa giá bài hát");
+                    System.out.println("6. Chỉnh sửa mã album");
+                    System.out.println("7. Chỉnh sửa hình ảnh về bài hát");
+                    System.out.println("8. Thoát");
+                    System.out.println("Nhập lựa chọn của bạn : ");
+
+                    choice = InputMethods.getByte();
+                    switch (choice) {
+                        case 1:
+                            System.out.printf("Tên cũ của bài hát : %s\n",songList.get(editSongIndex).getSongName());
+                            System.out.println();
+                            System.out.println("Nhập tên mới cho bài hát :");
+                            String inputSongName = InputMethods.getString();
+                            songList.get(editSongIndex).setSongName(inputSongName);
+                            System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            break;
+
+                        case 2:
+                            if (!singerList.isEmpty()) {
+                                System.out.println("Chọn ca sĩ cho bài hát:");
+                                for (int j = 0; j < singerList.size(); j++) {
+                                    if (singerList.get(editSongIndex).isStatus()) {
+                                        System.out.printf("%d. %s\n", j + 1, singerList.get(editSongIndex).getSingerName());
+                                    }
+                                }
+                                System.out.print("Lựa chọn của bạn: ");
+                                choice = InputMethods.getByte();
+                                songList.get(editSongIndex).setSingerId(singerList.get(choice - 1).getSingerId());
+                                System.out.println(Messages.UPDATE_INFO_SUCESS);
+                                break;
+                            } else {
+                                System.err.println(Messages.EMTY_LIST);
+                                break;
+                            }
+
+                        case 3:
+                            System.out.printf("Mô tả cũ của bài hát : %s\n",songList.get(editSongIndex).getDescription());
+                            System.out.println();
+                            System.out.println("Nhập mô tả cho bài hát : ");
+                            String inputDescription = InputMethods.getString();
+                            songList.get(editSongIndex).setDescription(inputDescription);
+                            System.out.println(Messages.UPDATE_STATUS_SUCESS);
+                            break;
+
+                        case 4:
+                            System.out.printf("Source cũ của bài hát : %s\n",songList.get(editSongIndex).getSource());
+                            System.out.println();
+                            System.out.println("Nhập source bài hát : ");
+                            String inputSource = InputMethods.getString();
+                            songList.get(editSongIndex).setSource(inputSource);
+                            System.out.println(Messages.UPDATE_STATUS_SUCESS);
+                            break;
+
+                        case 5:
+                            System.out.printf("Giá cũ của bài hát : %s\n",songList.get(editSongIndex).getPrice());
+                            System.out.println();
+                            System.out.println("Nhập giá bài hát : ");
+                            double inputPrice = InputMethods.getDouble();
+                            songList.get(editSongIndex).setPrice(inputPrice);
+                            System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            break;
+
+                        case 6:
+                            if (albumList.isEmpty()) {
+                                System.err.println(Messages.EMTY_LIST);
+                                songList.get(editSongIndex).setAlbumId(null);
+                            } else {
+                                System.out.println("Danh sách album");
+                                for (int j = 0; j < albumList.size(); j++) {
+                                    System.out.printf("%d. %s\n", j + 1, albumList.get(editSongIndex).getName());
+                                }
+                                System.out.println();
+                                System.out.print("Lựa chọn của bạn: ");
+                                choice = InputMethods.getByte();
+                                songList.get(editSongIndex).setAlbumId(albumList.get(choice - 1).getId());
+                                System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            }
+                            break;
+
+                        case 7:
+                            System.out.printf("Link ảnh cũ của bài hát : %s\n",songList.get(editSongIndex).getImage());
+                            System.out.println();
+                            System.out.println("Nhập nguồn hình ảnh cho bài hát : ");
+                            String inputImage = InputMethods.getString();
+                            songList.get(editSongIndex).setImage(inputImage);
+                            System.out.println(Messages.UPDATE_INFO_SUCESS);
+                            break;
+
+                        case 8:
+                            isExit = true;
+                            break;
+                    }
+                } while (!isExit);
+            } else {
+                System.err.println(Messages.ID_NOT_FOUND);
+            }
         }
-        System.out.println("Nhập ID bài hát muốn thêm vào danh sách yêu thích : ");
-
-        byte selectSongID = InputMethods.getByte();
-        int selectSongIndex = findIndexById(selectSongID);
-
-//        List<Song> selectSongList = new ArrayList<>();
-//        selectSongList.add(songList.get(selectSongIndex));
-//        .setFavoriteSongs(selectSongList);
-//        //Gán lại giá trị bookmark của user đang login cho user có cùng ID trong file để đảm bảo thống nhất data
-//        for (int j = 0; j < userList.size(); j++) {
-//            if (userList.get(j).getUserId() == userLoginToUsed.getUserId()) {
-//                userList.get(j).setFavoriteSongs(userLoginToUsed.getFavoriteSongs());
-//                break;
-//            }
-//        }
-//        // sau khi thêm lưu lại nó vào file
-//
-//        IOFile.writeToFile(IOFile.USER_PATH, userList);
-//        System.out.println(Messages.BOOKMARK_SUCESS);
+        // sau khi edit lưu lại nó vào file
+        IOFile.writeDataToFile(IOFile.SONG_PATH, songList);
     }
+
 
     @Override
     public Integer findIndexById(Object id) {
@@ -100,11 +211,13 @@ public class ISongIplm implements IGenericDesign {
         for (int i = 0; i < addNum; i++) {
             Song song = new Song();
             System.out.printf("Nhập thông tin cho bài hát thứ %d \n", i + 1);
+            System.out.println();
             song.inputData();
             songList.add(song);
             // sau khi add lưu lại nó vào file
             IOFile.writeDataToFile(IOFile.SONG_PATH, songList);
             System.out.println(Messages.ADD_NEW_SUCESS);
+            System.out.println();
         }
     }
 
@@ -139,147 +252,58 @@ public class ISongIplm implements IGenericDesign {
         }
     }
 
-    @Override
-    public void handleEdit() {
-        if (songList.isEmpty()) {
+    //////////////////////////// USER //////////////////////
+    public void showTrendingSong() {
+        if (songList == null || songList.isEmpty()) {
             System.err.println(Messages.EMTY_LIST);
-            askAdminToAddSong();
+            UserMenu.displayHomePageMenu();
         } else {
-            System.out.println("Nhập ID bài hát muốn cập nhật thông tin :");
-            int inputID = InputMethods.getInteger();
-            int editSongIndex = findIndexById(inputID);
-            if (editSongIndex != -1) {
-                do {
-                    System.out.println("========= EDIT SONG INFORMATION =======");
-                    System.out.println("1. Chỉnh sửa tên");
-                    System.out.println("2. Chỉnh sửa ID ca sĩ");
-                    System.out.println("3. Chỉnh sửa mô tả bài hát");
-                    System.out.println("4. Chỉnh sửa source bài hát");
-                    System.out.println("5. Chỉnh sửa giá bài hát");
-                    System.out.println("6. Chỉnh sửa mã album");
-                    System.out.println("7. Chỉnh sửa hình ảnh về bài hát");
-                    System.out.println("8. Thoát");
-                    System.out.println("Nhập lựa chọn của bạn : ");
-
-                    choice = InputMethods.getByte();
-                    switch (choice) {
-                        case 1:
-                            System.out.println("Nhập tên mới cho bài hát :");
-                            String inputSongName = InputMethods.getString();
-                            songList.get(editSongIndex).setSongName(inputSongName);
-                            System.out.println(Messages.UPDATE_INFO_SUCESS);
-                            break;
-
-                        case 2:
-                            if (!singerList.isEmpty()) {
-                                System.out.println("Chọn ca sĩ cho bài hát:");
-                                for (int j = 0; j < singerList.size(); j++) {
-                                    if (singerList.get(editSongIndex).isStatus()) {
-                                        System.out.printf("%d. %s\n", j + 1, singerList.get(editSongIndex).getSingerName());
-                                    }
-                                }
-                                System.out.print("Lựa chọn của bạn: ");
-                                choice = InputMethods.getByte();
-                                songList.get(editSongIndex).setSingerId(singerList.get(choice - 1).getSingerId());
-                                System.out.println(Messages.UPDATE_INFO_SUCESS);
-                                break;
-                            } else {
-                                System.err.println(Messages.EMTY_LIST);
-                                break;
-                            }
-
-                        case 3:
-                            System.out.println("Nhập mô tả cho bài hát : ");
-                            String inputDescription = InputMethods.getString();
-                            songList.get(editSongIndex).setDescription(inputDescription);
-                            System.out.println(Messages.UPDATE_STATUS_SUCESS);
-                            break;
-
-                        case 4:
-                            System.out.println("Nhập source bài hát : ");
-                            String inputSource = InputMethods.getString();
-                            songList.get(editSongIndex).setSource(inputSource);
-                            System.out.println(Messages.UPDATE_STATUS_SUCESS);
-                            break;
-
-                        case 5:
-                            System.out.println("Nhập giá bài hát : ");
-                            double inputPrice = InputMethods.getDouble();
-                            songList.get(editSongIndex).setPrice(inputPrice);
-                            System.out.println(Messages.UPDATE_INFO_SUCESS);
-                            break;
-
-                        case 6:
-                            if (albumList.isEmpty()) {
-                                System.err.println(Messages.EMTY_LIST);
-                                songList.get(editSongIndex).setAlbumId(null);
-                            } else {
-                                System.out.println("Danh sách album");
-                                for (int j = 0; j < albumList.size(); j++) {
-                                    System.out.printf("%d. %s\n", j + 1, albumList.get(editSongIndex).getName());
-                                }
-                                System.out.print("Lựa chọn của bạn: ");
-                                choice = InputMethods.getByte();
-                                songList.get(editSongIndex).setAlbumId(albumList.get(choice - 1).getId());
-                                System.out.println(Messages.UPDATE_INFO_SUCESS);
-                            }
-                            break;
-
-                        case 7:
-                            System.out.println("Nhập nguồn hình ảnh cho bài hát : ");
-                            String inputImage = InputMethods.getString();
-                            songList.get(editSongIndex).setImage(inputImage);
-                            System.out.println(Messages.UPDATE_INFO_SUCESS);
-                            break;
-
-                        case 8:
-                            isExit = true;
-                            break;
-                    }
-                } while (!isExit);
-            } else {
-                System.err.println(Messages.ID_NOT_FOUND);
-            }
-        }
-        // sau khi edit lưu lại nó vào file
-        IOFile.writeDataToFile(IOFile.SONG_PATH, songList);
-    }
-
-    @Override
-    public void handleDelete() {
-        if (songList.isEmpty()) {
-            System.err.println(Messages.EMTY_LIST);
-            askAdminToAddSong();
-        } else {
-            System.out.println("Nhập ID bài hát muốn thực hiện xóa :");
-            int inputID = InputMethods.getInteger();
-            int deleteIndex = findIndexById(inputID);
-            if (deleteIndex == -1) {
-                System.err.println(Messages.ID_NOT_FOUND);
-            } else {
-                songList.remove(deleteIndex);
-                IOFile.writeDataToFile(IOFile.SONG_PATH, songList);
-            }
+            //Tìm top 10 bài hát có lượt nghe nhiều nhất
+            List<Song> top10TrendingSongByPlayCount = songList.stream().sorted(Comparator.comparing(Song::getPlayCount).reversed()).limit(10).toList();
+            System.out.println("==========TRENDING SONG==========");
+            System.out.println();
+            top10TrendingSongByPlayCount.forEach(Song::displayData);
+            System.out.println();
         }
     }
 
-    @Override
-    public void handleFindByName() {
-        if (songList.isEmpty()) {
-            System.err.println(Messages.EMTY_LIST);
-            askAdminToAddSong();
-        } else {
-            System.out.println("Nhập tên bài hát muốn tìm kiếm : ");
-            String inputSearchName = InputMethods.getString();
 
-            List<Song> songListFilterBySearchKey = songList.stream().filter(song -> song.getSongName().toLowerCase().contains(inputSearchName.toLowerCase())).toList();
-            if (songListFilterBySearchKey.isEmpty()) {
-                System.err.println(Messages.NAME_NOT_FOUND);
-            } else {
-                System.out.printf("Danh sách tìm kiếm theo từ khòa %s là :\n", inputSearchName);
-                songListFilterBySearchKey.forEach(Song::displayData);
-                System.out.println();
-            }
+    public void showAllSongForUser() {
+        if (songList == null || songList.isEmpty()) {
+            System.err.println(Messages.EMTY_LIST);
+            UserMenu.displayHomePageMenu();
+        } else {
+            System.out.println("==========ALL SONG==========");
+            Pagination.paginateAndDisplay(songList, Pagination.ELEMENT_PER_PAGE);
+            UserMenu.displayHomePageMenu();
         }
+    }
+
+
+    public void bookmarkSongToFavoriteList() {
+        //Hiển thị danh sách bài hát cho người dùng chọn
+        System.out.println("==========ALL SONG==========");
+        for (int i = 0; i < songList.size(); i++) {
+            songList.get(i).displayData();
+        }
+        System.out.println("Nhập ID bài hát muốn thêm vào danh sách yêu thích : ");
+
+        byte selectSongID = InputMethods.getByte();
+        int selectSongIndex = findIndexById(selectSongID);
+
+//        List<Song> selectSongList = new ArrayList<>();
+//        selectSongList.add(songList.get(selectSongIndex));
+//        .setFavoriteSongs(selectSongList);
+//        //Gán lại giá trị bookmark của user đang login cho user có cùng ID trong file để đảm bảo thống nhất data
+//        for (int j = 0; j < userList.size(); j++) {
+//            if (userList.get(j).getUserId() == userLoginToUsed.getUserId()) {
+//                userList.get(j).setFavoriteSongs(userLoginToUsed.getFavoriteSongs());
+//                break;
+//            }
+//        }
+//        // sau khi thêm lưu lại nó vào file
+//
+//        IOFile.writeDataToFile(IOFile.USER_PATH, userList);
+//        System.out.println(Messages.BOOKMARK_SUCESS);
     }
 }

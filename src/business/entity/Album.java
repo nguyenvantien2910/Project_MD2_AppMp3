@@ -1,5 +1,6 @@
 package business.entity;
 
+import business.designIplm.DisplayData;
 import business.utils.InputMethods;
 import business.utils.Messages;
 
@@ -10,7 +11,7 @@ import static business.designIplm.IAlbumIplm.albumList;
 import static business.designIplm.IAuthenticationIplm.userList;
 import static business.designIplm.ISingerIplm.singerList;
 
-public class Album implements Serializable {
+public class Album implements Serializable, DisplayData {
     private Integer id;
     private Integer singerId;
     private String name;
@@ -97,34 +98,39 @@ public class Album implements Serializable {
     }
 
     private int inputSingerId() {
-        do {
-            System.out.println("Bạn có muốn nhập ca sĩ cho album không ? ");
-            System.out.println("1. Có ");
-            System.out.println("2. Không ");
-            System.out.println("Nhập lựa chọn của bạn : ");
+        if (!singerList.isEmpty()) {
+            do {
+                System.out.println("Bạn có muốn nhập ca sĩ cho album không ? ");
+                System.out.println("1. Có ");
+                System.out.println("2. Không ");
+                System.out.println("Nhập lựa chọn của bạn : ");
 
-            byte choice = InputMethods.getByte();
-            switch (choice) {
-                case 1:
-                    if (singerList.isEmpty()) {
-                        System.err.println(Messages.EMTY_LIST);
-                        return -1;
-                    } else {
-                        for (int j = 0; j < singerList.size(); j++) {
-                            if (singerList.get(j).isStatus()) {
-                                System.out.printf("%d.%s\n", j + 1, singerList.get(j).getSingerName());
+                byte choice = InputMethods.getByte();
+                switch (choice) {
+                    case 1:
+                        if (singerList.isEmpty()) {
+                            System.err.println(Messages.EMTY_LIST);
+                            return -1;
+                        } else {
+                            for (int j = 0; j < singerList.size(); j++) {
+                                if (singerList.get(j).isStatus()) {
+                                    System.out.printf("%d.%s\n", j + 1, singerList.get(j).getSingerName());
+                                }
                             }
+                            System.out.print("Lựa chọn của bạn: ");
+                            choice = InputMethods.getByte();
+                            return singerList.get(choice - 1).getSingerId();
                         }
-                        System.out.print("Lựa chọn của bạn: ");
-                        choice = InputMethods.getByte();
-                        return singerList.get(choice - 1).getSingerId();
-                    }
-                case 2:
-                    return -1;
-                default:
-                    System.err.println(Messages.SELECT_INVALID);
-            }
-        } while (true);
+                    case 2:
+                        return -1;
+                    default:
+                        System.err.println(Messages.SELECT_INVALID);
+                }
+            } while (true);
+        }
+        else {
+            return -1;
+        }
     }
 
 

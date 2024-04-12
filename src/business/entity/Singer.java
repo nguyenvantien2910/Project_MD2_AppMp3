@@ -1,7 +1,9 @@
 package business.entity;
 
+import business.designIplm.DisplayData;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import presentation.Login;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -9,7 +11,7 @@ import java.util.Comparator;
 import static business.designIplm.IAuthenticationIplm.userList;
 import static business.designIplm.ISingerIplm.singerList;
 
-public class Singer implements Serializable {
+public class Singer implements Serializable, DisplayData {
     private Integer singerId;
     private String singerName;
     private String description;
@@ -58,13 +60,13 @@ public class Singer implements Serializable {
     }
 
     public void displayData() {
-        System.out.printf("|Singer ID : %-5s | Singer Name : %-20s | Description : %-30s | Status : %-15s |\n",
-                this.singerId, this.singerName, this.description, this.status ? "Đang hoạt động" : "Ngừng hoạt động");
-    }
-
-    public void displayDataForUser() {
-        System.out.printf("|Singer ID : %-5s | Singer Name : %-20s | Description : %-30s |\n",
-                this.singerId, this.singerName, this.description);
+        if (!Login.user.isRole()) {
+            System.out.printf("|Singer ID : %-5s | Singer Name : %-20s | Description : %-30s |\n",
+                    this.singerId, this.singerName, this.description);
+        } else {
+            System.out.printf("|Singer ID : %-5s | Singer Name : %-20s | Description : %-30s | Status : %-15s |\n",
+                    this.singerId, this.singerName, this.description, this.status ? "Đang hoạt động" : "Ngừng hoạt động");
+        }
     }
 
     public void inputData() {
