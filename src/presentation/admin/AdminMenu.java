@@ -1,6 +1,8 @@
 package presentation.admin;
+import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import presentation.Login;
 
 import static presentation.Login.*;
 
@@ -39,6 +41,8 @@ public class AdminMenu {
                     dashboardManagement();
                     break;
                 case 7:
+                    Login.user = null;
+                    IOFile.updateUserLogin(user);
                     isExit = true;
                     return;
                 default:
@@ -79,21 +83,20 @@ public class AdminMenu {
     private static void historyManagement() {
         do {
             System.out.println("==========HISTORY MANAGEMENT==========");
-            System.out.println("1. Hiển thị danh sách lịch sử mua theo trạng thái");
+            System.out.println("1. Hiển thị danh sách lịch sử mua hàng");
             System.out.println("2. Tìm kiếm đơn hàng");
-            System.out.println("3. Duyệt đơn hàng");
-            System.out.println("4. Thoát");
+            System.out.println("3. Thoát");
             System.out.println(" Nhập lựa chọn của bạn : ");
 
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iHistoryIplm.handleShow();
                     break;
                 case 2:
+                    iHistoryIplm.handleFindByName();
                     break;
                 case 3:
-                    break;
-                case 4:
                     displayAdminMenu();
                     break;
                 default:
@@ -227,6 +230,7 @@ public class AdminMenu {
             switch (choice) {
                 case 1:
                     iUserIplm.handleShow();
+                    userManagement();
                     break;
                 case 2:
                     iUserIplm.handleAdd();
@@ -236,6 +240,7 @@ public class AdminMenu {
                     break;
                 case 4:
                     iUserIplm.updateUserStatus();
+                    userManagement();
                     break;
                 case 5:
                     displayAdminMenu();

@@ -11,11 +11,11 @@ import presentation.user.UserMenu;
 import java.io.File;
 
 public class Login {
-    private static IAuthenticationIplm iAuthenticationIplm = new IAuthenticationIplm();
     public static User user = null;
     public static byte choice;
     public static boolean isExit = false;
 
+    public static IAuthenticationIplm iAuthenticationIplm = new IAuthenticationIplm();
     public static IUserIplm iUserIplm = new IUserIplm();
     public static ISingerIplm iSingerIplm = new ISingerIplm();
     public static ISongIplm iSongIplm = new ISongIplm();
@@ -31,12 +31,10 @@ public class Login {
         }
         // tự động đăng nhập nếu user khác null
         if (user != null) {
-            {
-                if (user.isRole()) {
-                    AdminMenu.displayAdminMenu();
-                } else {
-                    UserMenu.displayUserMenu();
-                }
+            if (user.isRole()) {
+                AdminMenu.displayAdminMenu();
+            } else {
+                UserMenu.displayUserMenu();
             }
         }
     }
@@ -52,7 +50,7 @@ public class Login {
 
             System.out.println("Nhập lựa chọn của bạn : ");
 
-            byte choice = InputMethods.getByte();
+            choice = InputMethods.getByte();
 
             switch (choice) {
                 case 1:

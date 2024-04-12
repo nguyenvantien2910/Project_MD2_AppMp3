@@ -1,7 +1,11 @@
 package presentation.user;
 
+import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
+import presentation.Login;
+
+import java.io.File;
 
 import static business.utils.CSS.*;
 import static presentation.Login.*;
@@ -15,7 +19,7 @@ public class UserMenu {
             System.out.println("3. Trang bài hát yêu thích");
             System.out.println("4. Trang thông tin cá nhân");
             System.out.println("5. Lịch sử mua hàng");
-            System.out.println("6. Thoát");
+            System.out.println("6. Logout");
             System.out.println(" Nhập lựa chọn của bạn : ");
 
             choice = InputMethods.getByte();
@@ -36,6 +40,8 @@ public class UserMenu {
                     displayHistorypage();
                     break;
                 case 6:
+                    Login.user = null;
+                    IOFile.updateUserLogin(user);
                     isExit = true;
                     return;
                 default:
@@ -67,14 +73,14 @@ public class UserMenu {
 
     private static void displayInfoPage() {
         do {
-            System.out.println(ANSI_CYAN + "╔══════════════════════════════════╗");
-            System.out.println("║          INFORMATION MENU        ║");
-            System.out.println("╠══════════════════════════════════╣");
-            System.out.println("║ " + ANSI_YELLOW + "1. Hiển thị thông tin cá nhân" + ANSI_CYAN + "    ║");
-            System.out.println("║ " + ANSI_YELLOW + "2. Chỉnh sửa thông tin cá nhân" + ANSI_CYAN + "   ║");
-            System.out.println("║ " + ANSI_YELLOW + "3. Đổi mật khẩu" + ANSI_CYAN + "                  ║");
-            System.out.println("║ " + ANSI_YELLOW + "4. Thoát" + ANSI_CYAN + "                         ║");
-            System.out.println("╚══════════════════════════════════╝");
+            System.out.println(ANSI_CYAN + "╔════════════════════════════════════════════════════════════╗");
+            System.out.println("║                      INFORMATION MENU                      ║");
+            System.out.println("╠════════════════════════════════════════════════════════════╣");
+            System.out.println("║ " + ANSI_YELLOW + "1. Hiển thị thông tin cá nhân" + ANSI_CYAN + "                              ║");
+            System.out.println("║ " + ANSI_YELLOW + "2. Chỉnh sửa thông tin cá nhân" + ANSI_CYAN + "                             ║");
+            System.out.println("║ " + ANSI_YELLOW + "3. Đổi mật khẩu" + ANSI_CYAN + "                                            ║");
+            System.out.println("║ " + ANSI_YELLOW + "4. Thoát" + ANSI_CYAN + "                                                   ║");
+            System.out.println("╚════════════════════════════════════════════════════════════╝");
             System.out.print(ANSI_RESET + "Nhập lựa chọn của bạn: ");
 
             choice = InputMethods.getByte();
@@ -85,6 +91,7 @@ public class UserMenu {
                     break;
                 case 2:
                     iUserIplm.updateInfomation();
+                    displayInfoPage();
                     break;
                 case 3:
                     iUserIplm.updatePassword();
@@ -108,6 +115,7 @@ public class UserMenu {
             choice = InputMethods.getByte();
             switch (choice) {
                 case 1:
+                    iUserIplm.showAllBookMarkSong();
                     break;
                 case 2:
                     displayUserMenu();
@@ -147,6 +155,7 @@ public class UserMenu {
                     iHistoryIplm.handleAdd();
                     break;
                 case 5:
+                    iSongIplm.bookmarkSongToFavoriteList();
                     break;
                 case 6:
                     displayUserMenu();

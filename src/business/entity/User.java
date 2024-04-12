@@ -181,7 +181,7 @@ public class User implements Serializable, DisplayData {
         this.accountType = 1;
         this.createAt = LocalDate.now();
         this.updateAt = LocalDate.now();
-        this.wallet = 100.0f;
+        this.wallet = 0.0f;
         this.favoriteSongs = new ArrayList<>();
     }
 

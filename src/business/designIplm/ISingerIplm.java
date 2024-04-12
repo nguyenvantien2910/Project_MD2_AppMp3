@@ -13,9 +13,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static presentation.Login.choice;
+import static presentation.Login.isExit;
+
 public class ISingerIplm implements IGenericDesign {
-    private static byte choice;
-    private boolean isExit = false;
     public static List<Singer> singerList;
 
     static {

@@ -16,15 +16,13 @@ public class IOFile {
     public static final String LOGIN_USER_PATH = "src/business/data/loginUserInfo.txt";
 
     //Ghi data vào file
-    public static <T> void writeDataToFile(String path, List<T> list) {
+    public static <T> void writeDataToFile(String path, List<T> list) throws RuntimeException {
         FileOutputStream fos = null;
         ObjectOutputStream oos = null;
         try {
             fos = new FileOutputStream(path);
             oos = new ObjectOutputStream(fos);
             oos.writeObject(list);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } finally {
@@ -46,16 +44,12 @@ public class IOFile {
     public static <T> List<T> getDataFormFile(String path) {
         FileInputStream fis = null;
         ObjectInputStream ois = null;
-        List<T> list = new ArrayList<>();
+        List<T> list;
         try {
             fis = new FileInputStream(path);
             ois = new ObjectInputStream(fis);
             list = (List<T>) ois.readObject();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
             try {
@@ -81,11 +75,7 @@ public class IOFile {
             fis = new FileInputStream(LOGIN_USER_PATH);
             ois = new ObjectInputStream(fis);
             user = (User) ois.readObject();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
             try {

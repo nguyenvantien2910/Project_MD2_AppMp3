@@ -2,6 +2,7 @@ package business.designIplm;
 
 import business.design.IGenericDesign;
 import business.entity.Song;
+import business.entity.User;
 import business.utils.IOFile;
 import business.utils.InputMethods;
 import business.utils.Messages;
@@ -16,11 +17,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import static business.designIplm.IAlbumIplm.albumList;
+import static business.designIplm.IAuthenticationIplm.userList;
 import static business.designIplm.ISingerIplm.singerList;
+import static presentation.Login.choice;
+import static presentation.Login.isExit;
+
 
 public class ISongIplm implements IGenericDesign {
-    private static byte choice;
-    private boolean isExit = false;
     public static List<Song> songList;
 
     static {
@@ -100,7 +103,7 @@ public class ISongIplm implements IGenericDesign {
                     choice = InputMethods.getByte();
                     switch (choice) {
                         case 1:
-                            System.out.printf("Tên cũ của bài hát : %s\n",songList.get(editSongIndex).getSongName());
+                            System.out.printf("Tên cũ của bài hát : %s\n", songList.get(editSongIndex).getSongName());
                             System.out.println();
                             System.out.println("Nhập tên mới cho bài hát :");
                             String inputSongName = InputMethods.getString();
@@ -127,7 +130,7 @@ public class ISongIplm implements IGenericDesign {
                             }
 
                         case 3:
-                            System.out.printf("Mô tả cũ của bài hát : %s\n",songList.get(editSongIndex).getDescription());
+                            System.out.printf("Mô tả cũ của bài hát : %s\n", songList.get(editSongIndex).getDescription());
                             System.out.println();
                             System.out.println("Nhập mô tả cho bài hát : ");
                             String inputDescription = InputMethods.getString();
@@ -136,7 +139,7 @@ public class ISongIplm implements IGenericDesign {
                             break;
 
                         case 4:
-                            System.out.printf("Source cũ của bài hát : %s\n",songList.get(editSongIndex).getSource());
+                            System.out.printf("Source cũ của bài hát : %s\n", songList.get(editSongIndex).getSource());
                             System.out.println();
                             System.out.println("Nhập source bài hát : ");
                             String inputSource = InputMethods.getString();
@@ -145,7 +148,7 @@ public class ISongIplm implements IGenericDesign {
                             break;
 
                         case 5:
-                            System.out.printf("Giá cũ của bài hát : %s\n",songList.get(editSongIndex).getPrice());
+                            System.out.printf("Giá cũ của bài hát : %s\n", songList.get(editSongIndex).getPrice());
                             System.out.println();
                             System.out.println("Nhập giá bài hát : ");
                             double inputPrice = InputMethods.getDouble();
@@ -171,7 +174,7 @@ public class ISongIplm implements IGenericDesign {
                             break;
 
                         case 7:
-                            System.out.printf("Link ảnh cũ của bài hát : %s\n",songList.get(editSongIndex).getImage());
+                            System.out.printf("Link ảnh cũ của bài hát : %s\n", songList.get(editSongIndex).getImage());
                             System.out.println();
                             System.out.println("Nhập nguồn hình ảnh cho bài hát : ");
                             String inputImage = InputMethods.getString();
@@ -233,7 +236,7 @@ public class ISongIplm implements IGenericDesign {
     }
 
     private void askAdminToAddSong() {
-        if (Login.user.isRole()){
+        if (Login.user.isRole()) {
             System.out.println("Bạn có muốn thêm mới bài hát không ?");
             System.out.println("1. Có ");
             System.out.println("2. Không ");
@@ -243,9 +246,9 @@ public class ISongIplm implements IGenericDesign {
                 case 1:
                     handleAdd();
                     break;
-                    case 2:
-                        AdminMenu.songManagement();
-                        break;
+                case 2:
+                    AdminMenu.songManagement();
+                    break;
                 default:
                     System.err.println(Messages.SELECT_INVALID);
             }
@@ -281,29 +284,46 @@ public class ISongIplm implements IGenericDesign {
 
 
     public void bookmarkSongToFavoriteList() {
-        //Hiển thị danh sách bài hát cho người dùng chọn
-        System.out.println("==========ALL SONG==========");
-        for (int i = 0; i < songList.size(); i++) {
-            songList.get(i).displayData();
+        //Tạo biến để lưu thông tin người đang đăng nhậo
+        User user = Login.user;
+
+        if (songList.isEmpty()) {
+            System.err.println(Messages.EMTY_LIST);
+        } else {
+            //Hiển thị danh sách bài hát cho người dùng chọn
+            System.out.println("==========ALL SONG==========");
+            songList.forEach(Song::displayData);
+            System.out.println();
+            System.out.println("Nhập ID bài hát muốn thêm vào danh sách yêu thích : ");
+
+            //Tìm kiếm index của bài hát theo ID đã nhập
+            byte selectSongID = InputMethods.getByte();
+            int selectSongIndex = 0;
+            for (int i = 0; i < songList.size(); i++) {
+                if (songList.get(i).getSongId() == selectSongID) {
+                    selectSongIndex = i;
+                    break;
+                }
+            }
+
+            //Tại list mới để lưu danh sách bài hát yêu thích của user
+            List<Song> favoriteSongs = user.getFavoriteSongs();
+            if (favoriteSongs == null) {
+                favoriteSongs = new ArrayList<>();
+            }
+            favoriteSongs.add(songList.get(selectSongIndex));
+            user.setFavoriteSongs(favoriteSongs);
+
+            //Gán lại giá trị bookmark của user đang login cho user có cùng ID trong file để đảm bảo thống nhất data
+            for (int j = 0; j < userList.size(); j++) {
+                if (userList.get(j).getUserId() == user.getUserId()) {
+                    userList.get(j).setFavoriteSongs(user.getFavoriteSongs());
+                    break;
+                }
+            }
+            // sau khi thêm lưu lại nó vào file
+            IOFile.writeDataToFile(IOFile.USER_PATH, userList);
+            System.out.println(Messages.BOOKMARK_SUCESS);
         }
-        System.out.println("Nhập ID bài hát muốn thêm vào danh sách yêu thích : ");
-
-        byte selectSongID = InputMethods.getByte();
-        int selectSongIndex = findIndexById(selectSongID);
-
-//        List<Song> selectSongList = new ArrayList<>();
-//        selectSongList.add(songList.get(selectSongIndex));
-//        .setFavoriteSongs(selectSongList);
-//        //Gán lại giá trị bookmark của user đang login cho user có cùng ID trong file để đảm bảo thống nhất data
-//        for (int j = 0; j < userList.size(); j++) {
-//            if (userList.get(j).getUserId() == userLoginToUsed.getUserId()) {
-//                userList.get(j).setFavoriteSongs(userLoginToUsed.getFavoriteSongs());
-//                break;
-//            }
-//        }
-//        // sau khi thêm lưu lại nó vào file
-//
-//        IOFile.writeDataToFile(IOFile.USER_PATH, userList);
-//        System.out.println(Messages.BOOKMARK_SUCESS);
     }
 }

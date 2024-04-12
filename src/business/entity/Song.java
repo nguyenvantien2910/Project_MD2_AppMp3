@@ -149,7 +149,6 @@ public class Song implements Serializable, DisplayData {
 //    }
 
 
-
     public void inputData() {
         this.songId = findMaxId();
         this.singerId = selectSinger();
@@ -157,7 +156,11 @@ public class Song implements Serializable, DisplayData {
         this.description = inputDescription();
         this.source = inputSource();
         this.price = inputPrice();
-        inputAlbumId();
+        if (albumId != null) {
+            inputAlbumId();
+        } else {
+            this.albumId = null;
+        }
         this.image = inputImage();
         this.createAt = LocalDate.from(LocalDateTime.now());
         this.updateAt = LocalDate.from(LocalDateTime.now());

@@ -12,33 +12,19 @@ import java.util.List;
 
 public class IAuthenticationIplm implements IAuthentication {
     public static List<User> userList;
+
     static {
-        File userFile = new File(IOFile.USER_PATH);
-        if (userFile.length() == 0) {
+        File newFile = new File(IOFile.USER_PATH);
+        if (newFile.length() == 0) {
             userList = new ArrayList<>();
-            User admin = new User();
-            admin.setUserId(1);
-            admin.setUsername("admin123");
-            admin.setPassword(BCrypt.hashpw("admin123",BCrypt.gensalt(5)));
-            admin.setEmail("nguyenvantien2910@gmail.com");
-            admin.setStatus(true);
-            admin.setFullName("Nguyen Van Tien");
-            admin.setRole(true);
-            admin.setAvatar("【IP】売上 hoặc 【IP】見積.");
-            admin.setPhone("0987654321");
-            admin.setAccountType(2);
-            admin.setCreateAt(LocalDate.now());
-            admin.setUpdateAt(LocalDate.now());
-            admin.setWallet(999999.0);
-            userList.add(admin);
             IOFile.writeDataToFile(IOFile.USER_PATH, userList);
         } else {
             userList = IOFile.getDataFormFile(IOFile.USER_PATH);
-            if (userList.stream().noneMatch(user -> user.getUsername().equals("Admin"))){
+            if (userList.isEmpty()) {
                 User admin = new User();
                 admin.setUserId(1);
                 admin.setUsername("admin123");
-                admin.setPassword(BCrypt.hashpw("admin123",BCrypt.gensalt(5)));
+                admin.setPassword(BCrypt.hashpw("admin123", BCrypt.gensalt(5)));
                 admin.setEmail("nguyenvantien2910@gmail.com");
                 admin.setStatus(true);
                 admin.setFullName("Nguyen Van Tien");
@@ -54,12 +40,6 @@ public class IAuthenticationIplm implements IAuthentication {
             }
         }
     }
-
-
-    private User getUserFromUsername(String username) {
-        return userList.stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
-    }
-
 
     @Override
     public User login(String username, String password) {
@@ -79,5 +59,9 @@ public class IAuthenticationIplm implements IAuthentication {
         user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(5)));
         userList.add(user);
         IOFile.writeDataToFile(IOFile.USER_PATH, userList);
+    }
+
+    private User getUserFromUsername(String username) {
+        return userList.stream().filter(user -> user.getUsername().equals(username)).findFirst().orElse(null);
     }
 }

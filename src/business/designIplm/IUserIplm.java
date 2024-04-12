@@ -1,6 +1,7 @@
 package business.designIplm;
 
 import business.design.IUserDesign;
+import business.entity.Song;
 import business.entity.User;
 import business.utils.IOFile;
 import business.utils.InputMethods;
@@ -14,6 +15,7 @@ import presentation.user.UserMenu;
 import java.util.List;
 
 import static business.designIplm.IAuthenticationIplm.userList;
+import static presentation.Login.iSongIplm;
 
 public class IUserIplm implements IUserDesign {
     private static byte choice;
@@ -121,8 +123,12 @@ public class IUserIplm implements IUserDesign {
             System.out.println("Nhập tên người dùng muốn tìm kiếm :");
             String inputName = InputMethods.getString();
             List<User> userListFilterByName = userList.stream().filter(user -> user.getFullName().contains(inputName)).toList();
-            System.out.printf("Danh sách người dùng tìm kiếm theo từ khóa %s \n", inputName);
-            userListFilterByName.forEach(User::displayData);
+            if (userListFilterByName.isEmpty()) {
+                System.err.println(Messages.NAME_NOT_FOUND);
+            } else {
+                System.out.printf("Danh sách người dùng tìm kiếm theo từ khóa %s \n", inputName);
+                userListFilterByName.forEach(User::displayData);
+            }
         }
     }
 
@@ -234,7 +240,27 @@ public class IUserIplm implements IUserDesign {
 
     @Override
     public void showAllBookMarkSong() {
-
+        User user = Login.user;
+        if (user.getFavoriteSongs().isEmpty()){
+            System.err.println(Messages.EMTY_LIST);
+            System.out.println("Bạn có muốn thêm bài hát yêu thích không ? ");
+            System.out.println("1. Có ");
+            System.out.println("2. Không ");
+            System.out.println("Nhập lựa chọn của bạn : ");
+            choice = InputMethods.getByte();
+            switch (choice) {
+                case 1:
+                    iSongIplm.bookmarkSongToFavoriteList();
+                    break;
+                case 2:
+                    UserMenu.displayUserMenu();
+                    break;
+            }
+        } else {
+            System.out.println("============= BOOKMARK_SONG ===========");
+            user.getFavoriteSongs().forEach(Song::displayData);
+            System.out.println();
+        }
     }
 
 }
